@@ -1,12 +1,12 @@
 import { debug } from 'node:console';
 import Phaser from 'phaser'
 
-import HellowWorldScene from './scenes/HelloWorldScene';
+import SpaceLevel from './scenes/SpaceLevel';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     width: 800,
-    height: 520,
+    height: 600,
     physics: {
         default: 'arcade',
         arcade: {
@@ -14,7 +14,7 @@ const config: Phaser.Types.Core.GameConfig = {
             debug:true
         }
     },
-    scene: [HellowWorldScene]
+    scene: [SpaceLevel]
 };
 
 export default new Phaser.Game(config); 
