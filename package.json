@@ -2,7 +2,6 @@
   "name": "ludumdare-48",
   "version": "1.0.0",
   "description": "ludumdare-48",
-  "main": "index.js",
   "scripts": {
     "start": "parcel serve ./src/index.html -p 8000",
     "build": "parcel build ./src/index.html",
