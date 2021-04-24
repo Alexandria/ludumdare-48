@@ -4,7 +4,7 @@
   "description": "ludumdare-48",
   "scripts": {
     "start": "parcel serve ./src/index.html -p 8000",
-    "build": "parcel build ./src/index.html",
+    "build": "parcel build ./src/index.html --public-url ./",
     "test": "test"
   },
   "repository": {
