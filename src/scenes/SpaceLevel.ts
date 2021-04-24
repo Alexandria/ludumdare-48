@@ -7,6 +7,7 @@ import plant from 'url:../assets/plant.png'
 import star from 'url:../assets/star.png'
 import AsteroidTileSet from 'url:../assets/asteroid_tileset.png'
 import tileMap from '../assets/spaceMap.json'
+const musicPath = require('url:../../public/ludumdareWip.wav');
 
 export default class SpaceLevel extends Phaser.Scene {
 
@@ -14,7 +15,6 @@ export default class SpaceLevel extends Phaser.Scene {
     private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
     private camera?:Phaser.Cameras.Scene2D.Camera
     private star?: Phaser.Physics.Matter.Sprite
-    // private musicPath = require('url:../assets/ludumdareWip.wav');
     private currentPlayKey = ''
     private currentPlayerLocation = {x:0, y:0}
 
@@ -27,9 +27,10 @@ export default class SpaceLevel extends Phaser.Scene {
 
     preload =()=>
     {
+        
 
         this.load.image("sky", sky)
-        // this.load.audio('music',  this.musicPath)
+        this.load.audio('music',  musicPath)
         this.load.image("mountain", mountain)
         this.load.image("plant", plant)
         this.load.image("star", star)
@@ -67,8 +68,8 @@ export default class SpaceLevel extends Phaser.Scene {
         this.add.image(width*4 , height*0.5, "sky").setScrollFactor(0.5)
 
         // Music
-        // const theme = this.sound.add('music',{volume: 0.1} )
-        // theme.play()
+        const theme = this.sound.add('music',{volume: 0.1} )
+        theme.play()
 
         const map =  this.make.tilemap({key:'tilemap'})
         const tileset = map.addTilesetImage('AstroidsTest', 'asteroidTileSet')
