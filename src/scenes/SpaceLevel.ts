@@ -14,7 +14,7 @@ export default class SpaceLevel extends Phaser.Scene {
     private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
     private camera?:Phaser.Cameras.Scene2D.Camera
     private star?: Phaser.Physics.Matter.Sprite
-    private musicPath = require('url:../assets/ludumdareWip.wav');
+    // private musicPath = require('url:../assets/ludumdareWip.wav');
     private currentPlayKey = ''
     private currentPlayerLocation = {x:0, y:0}
 
@@ -29,7 +29,7 @@ export default class SpaceLevel extends Phaser.Scene {
     {
 
         this.load.image("sky", sky)
-        this.load.audio('music',  this.musicPath)
+        // this.load.audio('music',  this.musicPath)
         this.load.image("mountain", mountain)
         this.load.image("plant", plant)
         this.load.image("star", star)
@@ -67,7 +67,7 @@ export default class SpaceLevel extends Phaser.Scene {
         this.add.image(width*4 , height*0.5, "sky").setScrollFactor(0.5)
 
         // Music
-        const theme = this.sound.add('music',{volume: 0.1} )
+        // const theme = this.sound.add('music',{volume: 0.1} )
         // theme.play()
 
         const map =  this.make.tilemap({key:'tilemap'})
@@ -79,60 +79,22 @@ export default class SpaceLevel extends Phaser.Scene {
         this.matter.world.convertTilemapLayer(asteriodGround)
         this.matter.world.setBounds(0,0,11000,height)
 
-
-        // this.add.image(0,height, "mountain").setOrigin(0,1).setScrollFactor(0.5)
-        // this.createAligned(this,this.scale.width * 10 , 'mountain', 0.5)
-        // this.createAligned(this,this.scale.width * 10 , 'plateau', 1)
-        
-
-        // this.add.image(0,height,'plateau').setOrigin(0,1).setScrollFactor(1)
-      
-       const groundWidth = this.textures.get('mountain').getSourceImage().width
-
-        // this.platforms = this.physics.add.staticGroup()
-        // const ground:Phaser.GameObjects.Sprite = this.platforms?.create(0, height, 'ground')
-        // const ground1:Phaser.GameObjects.Sprite = this.platforms?.create(width, height, 'ground')
-        // const ground2:Phaser.GameObjects.Sprite = this.platforms?.create(width*2, height, 'ground')
-    //    this.add.image(0,height, 'ground').setOrigin(0,1).setScrollFactor(1)
-    //    this.createAligned(this,this.scale.width * 8 , 'ground', 1)
-        // ground.setScale(2).refreshBody()
-        // ground1.setScale(2).refreshBody()
-        // ground2.setScale(2).refreshBody()
-        
-        
-      
-       
-
-        ///this.add.image(0,height, 'plant').setOrigin(0,1).setScrollFactor(1.5)
-
-        // this.createAligned(this,this.scale.width * 10 , 'plant', 1.5)
-  
-        // const ground:Phaser.GameObjects.Sprite = this.platforms.create(400, 568, 'ground')
-        //  ground.setScale(2).refreshBody()
-
-        //  this.player = this.physics.add.sprite(50, 0, 'astronaut')
-        //  this.player.setBounce(0.2)
-         //this.player.setCollideWorldBounds(true)
-         this.currentPlayKey = "astronaut"
-         this.createPlayerAnimations()
+        this.currentPlayKey = "astronaut"
+        this.createPlayerAnimations()
 
                 
-         this.player = this.matter.add.sprite(width * 0.5, height * 0.5, astronaut).play('player-idel').setFixedRotation()
+        this.player = this.matter.add.sprite(width * 0.5, height * 0.5, astronaut).play('player-idel').setFixedRotation()
         
-         this.player.setOnCollide((data:MatterJS.ICollisionPair)=>{
+        this.player.setOnCollide((data:MatterJS.ICollisionPair)=>{
              this.isTouchingGround = true
-         })
+        })
 
-         if(this.player){
+        if(this.player){
             this.cameras.main.startFollow(this.player)
-         }
-
-      
-       
+        }
 
         //  this.physics.add.collider(this.player, this.platforms)
-
-         
+  
         this.star = this.matter.add.sprite(650,0, 'star', undefined, {label:'star'})
         this.player.setOnCollide((data:MatterJS.ICollisionPair) =>{
             const {bodyA, bodyB} = data
@@ -142,25 +104,14 @@ export default class SpaceLevel extends Phaser.Scene {
             if(bodyB.label =='star' && this.player){
             //    this.star?.removeFromDisplayList()
                this.currentPlayerLocation = {x:this.player?.x, y:this.player?.y}
+               this.currentPlayKey = "astronautTwo"
                this.player.setTexture("astronautTwo")
             }
         })
 
-        // ({
-        //     key:"star",
-        //     repeat: 3,
-        //     setXY: {x:250, y:0, stepX: 70}
-        //     })
-  
-        // this.physics.add.collider(this.star, this.platforms, )
-
-        // this.physics.add.overlap(this.player, this.star, this.handeCollectItems, undefined, this)
      
          this.cursors = this.input.keyboard.createCursorKeys()
       
-         
-         
-
     }
 
     private createPlayerAnimations = () =>{
@@ -173,7 +124,7 @@ export default class SpaceLevel extends Phaser.Scene {
 
         this.anims.create({
             key:'player-idel',
-            frames: [{key: this.currentPlayKey, frame:4}],
+            frames: [{key: this.currentPlayKey.toString(), frame:4}],
             frameRate:20
         })
 
@@ -196,7 +147,7 @@ export default class SpaceLevel extends Phaser.Scene {
     }
 
     update = () => {
-        
+ 
         if(this.cursors && this.cursors?.left.isDown){
             this.player?.setVelocityX(-10)
             this.player?.anims.play('player-left', true)
