@@ -1,6 +1,6 @@
 import Phaser, { Scene } from 'phaser'
-import dude from 'url:../assets/dude.png'
-import sky from 'url:../assets/sky.png'
+import dude from 'url:../assets/dude-one.png'
+import sky from 'url:../assets/space_bg.png'
 import ground from 'url:../assets/ground.png'
 import mountain from 'url:../assets/mountain.png'
 import plateau from 'url:../assets/plateau.png'
@@ -27,7 +27,7 @@ export default class HellowWorldScene extends Phaser.Scene {
         this.load.image("mountain", mountain)
         this.load.image("plateau", plateau)
         this.load.image("plant", plant)
-        this.load.spritesheet('dude', dude, {frameWidth:32,frameHeight:48})
+        this.load.spritesheet('dude', dude, {frameWidth:16,frameHeight:16})
         
     }
 
@@ -51,12 +51,12 @@ export default class HellowWorldScene extends Phaser.Scene {
     create = () =>
     {
         const {width, height} = this.scale
-        this.cameras.main.setBounds(0,0,2048,height)
-        this.add.image(width * 0.5, height *0.5, "sky").setScrollFactor(0)
+        this.cameras.main.setBounds(0,0,12200,height)
+        this.add.image(width*4 , height*0.5, "sky").setScrollFactor(0.5)
 
         // this.add.image(0,height, "mountain").setOrigin(0,1).setScrollFactor(0.5)
-        this.createAligned(this,this.scale.width * 10 , 'mountain', 0.5)
-        this.createAligned(this,this.scale.width * 10 , 'plateau', 1)
+        // this.createAligned(this,this.scale.width * 10 , 'mountain', 0.5)
+        // this.createAligned(this,this.scale.width * 10 , 'plateau', 1)
         
 
         //this.add.image(0,height,'plateau').setOrigin(0,1).setScrollFactor(1)
@@ -68,7 +68,7 @@ export default class HellowWorldScene extends Phaser.Scene {
         const ground1:Phaser.GameObjects.Sprite = this.platforms?.create(width, height, 'ground')
         const ground2:Phaser.GameObjects.Sprite = this.platforms?.create(width*2, height, 'ground')
        // this.add.image(0,height, 'ground').setOrigin(0,1).setScrollFactor(1)
-       this.createAligned(this,this.scale.width * 10 , 'ground', 1)
+       this.createAligned(this,this.scale.width * 8 , 'ground', 1)
         ground.setScale(2).refreshBody()
         ground1.setScale(2).refreshBody()
         ground2.setScale(2).refreshBody()
@@ -84,7 +84,7 @@ export default class HellowWorldScene extends Phaser.Scene {
         // const ground:Phaser.GameObjects.Sprite = this.platforms.create(400, 568, 'ground')
         //  ground.setScale(2).refreshBody()
 
-         this.player = this.physics.add.sprite(0, 0, 'dude')
+         this.player = this.physics.add.sprite(50, 0, 'dude')
          this.player.setBounce(0.2)
          //this.player.setCollideWorldBounds(true)
 
@@ -133,7 +133,7 @@ export default class HellowWorldScene extends Phaser.Scene {
             this.player?.setVelocityX(-160)
             this.player?.anims.play('left', true)
         } else if (this.cursors?.right.isDown){
-            this.player?.setVelocityX(160)
+            this.player?.setVelocityX(800)
             this.player?.anims.play('right', true)
         }else{
             this.player?.setVelocityX(0)
