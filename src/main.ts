@@ -1,4 +1,3 @@
-import { debug } from 'node:console';
 import Phaser from 'phaser'
 
 import SpaceLevel from './scenes/SpaceLevel';
@@ -10,7 +9,6 @@ const config: Phaser.Types.Core.GameConfig = {
     physics: {
         default: 'matter',
         matter: {
-            //gravity: { y: 200 },
             debug:true
         }
     },
