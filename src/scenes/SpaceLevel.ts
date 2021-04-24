@@ -1,18 +1,20 @@
 import Phaser, { Scene } from 'phaser'
 import dude from 'url:../assets/dude-one.png'
+import astronaut from 'url:../assets/astronaut.png'
 import sky from 'url:../assets/space_bg.png'
 import ground from 'url:../assets/ground.png'
 import mountain from 'url:../assets/mountain.png'
 import plateau from 'url:../assets/plateau.png'
 import plant from 'url:../assets/plant.png'
+import star from 'url:../assets/star.png'
 
-
-export default class HellowWorldScene extends Phaser.Scene {
+export default class SpaceLevel extends Phaser.Scene {
 
     private platforms?: Phaser.Physics.Arcade.StaticGroup
     private player?:Phaser.Physics.Arcade.Sprite
     private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
     private camera?:Phaser.Cameras.Scene2D.Camera
+    private star?: Phaser.Physics.Arcade.Group
 
 
     constructor(){
@@ -27,7 +29,10 @@ export default class HellowWorldScene extends Phaser.Scene {
         this.load.image("mountain", mountain)
         this.load.image("plateau", plateau)
         this.load.image("plant", plant)
+        this.load.image("star", star)
         this.load.spritesheet('dude', dude, {frameWidth:16,frameHeight:16})
+        this.load.spritesheet('astronaut', astronaut, {frameWidth:9,frameHeight:16})
+        
         
     }
 
@@ -84,7 +89,7 @@ export default class HellowWorldScene extends Phaser.Scene {
         // const ground:Phaser.GameObjects.Sprite = this.platforms.create(400, 568, 'ground')
         //  ground.setScale(2).refreshBody()
 
-         this.player = this.physics.add.sprite(50, 0, 'dude')
+         this.player = this.physics.add.sprite(50, 0, 'astronaut')
          this.player.setBounce(0.2)
          //this.player.setCollideWorldBounds(true)
 
@@ -96,20 +101,20 @@ export default class HellowWorldScene extends Phaser.Scene {
 
          this.anims.create({
              key:'left',
-             frames: this.anims.generateFrameNumbers('dude', {start:0, end:3}),
+             frames: this.anims.generateFrameNumbers('astronaut', {start:6, end:9}),
              frameRate:10,
              repeat:-1
          })
 
          this.anims.create({
              key:'turn',
-             frames: [{key:'dude', frame:4}],
+             frames: [{key:'astronaut', frame:4}],
              frameRate:20
          })
 
          this.anims.create({
              key:'right',
-             frames: this.anims.generateFrameNumbers('dude', {start:5, end:8}),
+             frames: this.anims.generateFrameNumbers('astronaut', {start:0, end:3}),
              frameRate:10,
              repeat:-1
 
@@ -119,11 +124,28 @@ export default class HellowWorldScene extends Phaser.Scene {
          this.physics.add.collider(this.player, this.platforms)
 
          
+        this.star = this.physics.add.group({
+        key:"star",
+        repeat: 3,
+        setXY: {x:250, y:0, stepX: 70}
+        })
+  
+        this.physics.add.collider(this.star, this.platforms, )
+
+        this.physics.add.overlap(this.player, this.star, this.handeCollectItems, undefined, this)
      
          this.cursors = this.input.keyboard.createCursorKeys()
       
-      
          
+         
+
+    }
+
+
+    handeCollectItems = (player:Phaser.GameObjects.GameObject, item: Phaser.GameObjects.GameObject) =>{
+
+        const itemImage = item as Phaser.Physics.Arcade.Image
+        itemImage.disableBody(true, true)
 
     }
 
@@ -133,7 +155,7 @@ export default class HellowWorldScene extends Phaser.Scene {
             this.player?.setVelocityX(-160)
             this.player?.anims.play('left', true)
         } else if (this.cursors?.right.isDown){
-            this.player?.setVelocityX(800)
+            this.player?.setVelocityX(160)
             this.player?.anims.play('right', true)
         }else{
             this.player?.setVelocityX(0)
