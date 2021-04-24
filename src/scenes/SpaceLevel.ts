@@ -1,10 +1,8 @@
-import Phaser, { Scene } from 'phaser'
-import dude from 'url:../assets/dude-one.png'
+import Phaser from 'phaser'
 import astronautTwo from 'url:../assets/astronaut-two.png'
 import astronaut from 'url:../assets/astronaut.png'
 import sky from 'url:../assets/space_bg.png'
 import mountain from 'url:../assets/mountain.png'
-import plateau from 'url:../assets/plateau.png'
 import plant from 'url:../assets/plant.png'
 import star from 'url:../assets/star.png'
 import AsteroidTileSet from 'url:../assets/asteroid_tileset.png'
@@ -17,6 +15,8 @@ export default class SpaceLevel extends Phaser.Scene {
     private camera?:Phaser.Cameras.Scene2D.Camera
     private star?: Phaser.Physics.Matter.Sprite
     private musicPath = require('url:../assets/ludumdareWip.wav');
+    private currentPlayKey = ''
+    private currentPlayerLocation = {x:0, y:0}
 
 
     private isTouchingGround = false
@@ -31,7 +31,6 @@ export default class SpaceLevel extends Phaser.Scene {
         this.load.image("sky", sky)
         this.load.audio('music',  this.musicPath)
         this.load.image("mountain", mountain)
-        this.load.image("plateau", plateau)
         this.load.image("plant", plant)
         this.load.image("star", star)
         this.load.image('asteroidTileSet', AsteroidTileSet)
@@ -69,7 +68,7 @@ export default class SpaceLevel extends Phaser.Scene {
 
         // Music
         const theme = this.sound.add('music',{volume: 0.1} )
-        theme.play()
+        // theme.play()
 
         const map =  this.make.tilemap({key:'tilemap'})
         const tileset = map.addTilesetImage('AstroidsTest', 'asteroidTileSet')
@@ -114,11 +113,12 @@ export default class SpaceLevel extends Phaser.Scene {
         //  this.player = this.physics.add.sprite(50, 0, 'astronaut')
         //  this.player.setBounce(0.2)
          //this.player.setCollideWorldBounds(true)
-
+         this.currentPlayKey = "astronaut"
          this.createPlayerAnimations()
 
                 
-         this.player = this.matter.add.sprite(width * 0.5, height * 0.5, astronautTwo).play('player-idel').setFixedRotation()
+         this.player = this.matter.add.sprite(width * 0.5, height * 0.5, astronaut).play('player-idel').setFixedRotation()
+        
          this.player.setOnCollide((data:MatterJS.ICollisionPair)=>{
              this.isTouchingGround = true
          })
@@ -133,7 +133,18 @@ export default class SpaceLevel extends Phaser.Scene {
         //  this.physics.add.collider(this.player, this.platforms)
 
          
-        this.star = this.matter.add.sprite(250,0, 'star', undefined)
+        this.star = this.matter.add.sprite(650,0, 'star', undefined, {label:'star'})
+        this.player.setOnCollide((data:MatterJS.ICollisionPair) =>{
+            const {bodyA, bodyB} = data
+            console.log(bodyB.label)
+            if(bodyB.label !== 'star') this.isTouchingGround = true
+
+            if(bodyB.label =='star' && this.player){
+            //    this.star?.removeFromDisplayList()
+               this.currentPlayerLocation = {x:this.player?.x, y:this.player?.y}
+               this.player.setTexture("astronautTwo")
+            }
+        })
 
         // ({
         //     key:"star",
@@ -155,20 +166,20 @@ export default class SpaceLevel extends Phaser.Scene {
     private createPlayerAnimations = () =>{
         this.anims.create({
             key:'player-left',
-            frames: this.anims.generateFrameNumbers('astronautTwo', {start:6, end:9}),
+            frames: this.anims.generateFrameNumbers(this.currentPlayKey, {start:6, end:9}),
             frameRate:10,
             repeat:-1
         })
 
         this.anims.create({
             key:'player-idel',
-            frames: [{key:'astronautTwo', frame:4}],
+            frames: [{key: this.currentPlayKey, frame:4}],
             frameRate:20
         })
 
         this.anims.create({
             key:'player-right',
-            frames: this.anims.generateFrameNumbers('astronautTwo', {start:0, end:3}),
+            frames: this.anims.generateFrameNumbers(this.currentPlayKey, {start:0, end:3}),
             frameRate:10,
             repeat:-1
 
