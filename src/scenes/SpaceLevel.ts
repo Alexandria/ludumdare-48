@@ -12,6 +12,9 @@ const musicPath = require('url:../../public/ludumdareWip.wav');
 export default class SpaceLevel extends Phaser.Scene {
 
     private player?:Phaser.Physics.Matter.Sprite
+    private playerOne?:Phaser.Physics.Matter.Sprite
+    private playerTwo?:Phaser.Physics.Matter.Sprite
+    private playerThree?:Phaser.Physics.Matter.Sprite
     private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
     private camera?:Phaser.Cameras.Scene2D.Camera
     private star?: Phaser.Physics.Matter.Sprite
@@ -69,7 +72,7 @@ export default class SpaceLevel extends Phaser.Scene {
 
         // Music
         const theme = this.sound.add('music',{volume: 0.1} )
-        theme.play()
+        // theme.play()
 
         const map =  this.make.tilemap({key:'tilemap'})
         const tileset = map.addTilesetImage('AstroidsTest', 'asteroidTileSet')
@@ -82,19 +85,20 @@ export default class SpaceLevel extends Phaser.Scene {
 
         this.currentPlayKey = "astronaut"
         this.createPlayerAnimations()
+        
 
-                
-        this.player = this.matter.add.sprite(width * 0.5, height * 0.5, astronaut).play('player-idel').setFixedRotation()
+        this.player = this.matter.add.sprite(width * 0.5, height * 0.5, this.currentPlayKey).play('player-idel').setFixedRotation()
         
         this.player.setOnCollide((data:MatterJS.ICollisionPair)=>{
              this.isTouchingGround = true
         })
 
+     
+
         if(this.player){
             this.cameras.main.startFollow(this.player)
         }
 
-        //  this.physics.add.collider(this.player, this.platforms)
   
         this.star = this.matter.add.sprite(650,0, 'star', undefined, {label:'star'})
         this.player.setOnCollide((data:MatterJS.ICollisionPair) =>{
@@ -106,7 +110,14 @@ export default class SpaceLevel extends Phaser.Scene {
             //    this.star?.removeFromDisplayList()
                this.currentPlayerLocation = {x:this.player?.x, y:this.player?.y}
                this.currentPlayKey = "astronautTwo"
-               this.player.setTexture("astronautTwo")
+               this.createPlayerTwoAnimations()
+               this.playerTwo = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautTwo").play('player2-idel').setFixedRotation()
+               this.cameras.main.stopFollow()
+               this.cameras.main.startFollow(this.playerTwo)
+               this.playerTwo.setOnCollide((data:MatterJS.ICollisionPair)=>{
+                this.isTouchingGround = true
+           })
+
             }
         })
 
@@ -117,28 +128,49 @@ export default class SpaceLevel extends Phaser.Scene {
 
     private createPlayerAnimations = () =>{
         this.anims.create({
-            key:'player-left',
-            frames: this.anims.generateFrameNumbers(this.currentPlayKey, {start:6, end:9}),
+            key:'player1-left',
+            frames: this.anims.generateFrameNumbers("astronaut", {start:6, end:9}),
             frameRate:10,
             repeat:-1
         })
 
         this.anims.create({
-            key:'player-idel',
-            frames: [{key: this.currentPlayKey.toString(), frame:4}],
+            key:'player1-idel',
+            frames: [{key: "astronaut", frame:4}],
             frameRate:20
         })
 
         this.anims.create({
-            key:'player-right',
-            frames: this.anims.generateFrameNumbers(this.currentPlayKey, {start:0, end:3}),
+            key:'player1-right',
+            frames: this.anims.generateFrameNumbers("astronaut", {start:0, end:3}),
+            frameRate:10,
+            repeat:-1
+
+        })    
+    }
+
+    createPlayerTwoAnimations = () =>{
+        this.anims.create({
+            key:'player2-left',
+            frames: this.anims.generateFrameNumbers("astronautTwo", {start:6, end:9}),
+            frameRate:10,
+            repeat:-1
+        })
+
+        this.anims.create({
+            key:'player2-idel',
+            frames: [{key: "astronautTwo", frame:4}],
+            frameRate:20
+        })
+
+        this.anims.create({
+            key:'player2-right',
+            frames: this.anims.generateFrameNumbers("astronautTwo", {start:0, end:3}),
             frameRate:10,
             repeat:-1
 
         })
-
     }
-
 
     handeCollectItems = (player:Phaser.GameObjects.GameObject, item: Phaser.GameObjects.GameObject) =>{
 
@@ -147,23 +179,50 @@ export default class SpaceLevel extends Phaser.Scene {
 
     }
 
-    update = () => {
- 
+    playerOneMovement = () => {
+        if(this.currentPlayKey !== 'astronaut') { 
+            this.player?.destroy() 
+            return
+        }
+
         if(this.cursors && this.cursors?.left.isDown){
             this.player?.setVelocityX(-10)
-            this.player?.anims.play('player-left', true)
+            this.player?.anims.play('player1-left', true)
         } else if (this.cursors?.right.isDown){
             this.player?.setVelocityX(10)
-            this.player?.anims.play('player-right', true)
+            this.player?.anims.play('player1-right', true)
         }else{
             this.player?.setVelocityX(0)
-            this.player?.anims.play('player-idel')
+            this.player?.anims.play('player1-idel')
         }
 
         if(this.cursors?.up.isDown && this.isTouchingGround){
             this.player?.setVelocityY(-10)
             this.isTouchingGround = false
         }
+
+    }
+
+    update = () => {
+ 
+        this.playerOneMovement()
+
+        if(this.cursors && this.cursors?.left.isDown){
+            this.playerTwo?.setVelocityX(-10)
+            this.playerTwo?.anims.play('player2-left', true)
+        } else if (this.cursors?.right.isDown){
+            this.playerTwo?.setVelocityX(10)
+            this.playerTwo?.anims.play('player2-right', true)
+        }else{
+            this.playerTwo?.setVelocityX(0)
+            this.playerTwo?.anims.play('player2-idel')
+        }
+
+        if(this.cursors?.up.isDown && this.isTouchingGround){
+            this.playerTwo?.setVelocityY(-10)
+            this.isTouchingGround = false
+        }
+       
 
 
     }

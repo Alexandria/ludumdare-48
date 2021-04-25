@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "ludumdare-48",
   "scripts": {
-    "start": "parcel serve ./src/index.html -p 8000",
+    "start": "parcel serve ./src/index.html --no-cache -p 8000",
     "build": "parcel build ./src/index.html --public-url ./",
     "test": "test"
   },
