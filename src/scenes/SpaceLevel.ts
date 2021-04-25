@@ -1,20 +1,25 @@
 import Phaser from 'phaser'
 import astronautTwo from 'url:../assets/astronaut-two.png'
+import astronautThree from 'url:../assets/astronaut-three.png'
+import astronautFour from 'url:../assets/astronaut-four.png'
 import astronaut from 'url:../assets/astronaut.png'
 import sky from 'url:../assets/space_bg.png'
 import mountain from 'url:../assets/mountain.png'
 import plant from 'url:../assets/plant.png'
 import star from 'url:../assets/star.png'
+import wings from 'url:../assets/wings.png'
+import final from 'url:../assets/final.png'
 import AsteroidTileSet from 'url:../assets/asteroid_tileset.png'
 import tileMap from '../assets/spaceMap.json'
+import bomb from "url:../assets/bomb.png"
 const musicPath = require('url:../../public/ludumdareWip.wav');
 
 export default class SpaceLevel extends Phaser.Scene {
 
-    private player?:Phaser.Physics.Matter.Sprite
-    private playerOne?:Phaser.Physics.Matter.Sprite
-    private playerTwo?:Phaser.Physics.Matter.Sprite
-    private playerThree?:Phaser.Physics.Matter.Sprite
+    private player:Phaser.Physics.Matter.Sprite 
+    private playerTwo:Phaser.Physics.Matter.Sprite
+    private playerThree:Phaser.Physics.Matter.Sprite
+    private playerFour:Phaser.Physics.Matter.Sprite
     private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
     private camera?:Phaser.Cameras.Scene2D.Camera
     private star?: Phaser.Physics.Matter.Sprite
@@ -37,10 +42,15 @@ export default class SpaceLevel extends Phaser.Scene {
         this.load.image("mountain", mountain)
         this.load.image("plant", plant)
         this.load.image("star", star)
+        this.load.image("bomb", bomb)
+        this.load.image("wings", wings)
+        this.load.image("final", final)
         this.load.image('asteroidTileSet', AsteroidTileSet)
         this.load.tilemapTiledJSON('tilemap', tileMap)
         this.load.spritesheet('astronaut', astronaut, {frameWidth:11,frameHeight:16})   
         this.load.spritesheet('astronautTwo', astronautTwo, {frameWidth:19,frameHeight:32})
+        this.load.spritesheet('astronautThree', astronautThree, {frameWidth:34,frameHeight:64})
+        this.load.spritesheet('astronautFour', astronautFour, {frameWidth:51,frameHeight:96})
       
         
     }
@@ -72,7 +82,7 @@ export default class SpaceLevel extends Phaser.Scene {
 
         // Music
         const theme = this.sound.add('music',{volume: 0.1} )
-        // theme.play()
+        theme.play()
 
         const map =  this.make.tilemap({key:'tilemap'})
         const tileset = map.addTilesetImage('AstroidsTest', 'asteroidTileSet')
@@ -87,39 +97,174 @@ export default class SpaceLevel extends Phaser.Scene {
         this.createPlayerAnimations()
         
 
-        this.player = this.matter.add.sprite(width * 0.5, height * 0.5, this.currentPlayKey).play('player-idel').setFixedRotation()
-        
-        this.player.setOnCollide((data:MatterJS.ICollisionPair)=>{
-             this.isTouchingGround = true
-        })
-
-     
-
+        this.player = this.matter.add.sprite(width * 0.5, height * 0.5, this.currentPlayKey, undefined, {label:'player1'}).play('player-idel').setFixedRotation()
+        // this.playerTwo = this.matter.add.sprite(0, 0, "astronautTwo", undefined, {label:'player2'}).play('player2-idel').setFixedRotation().setVisible(false)
+        // this.playerThree = this.matter.add.sprite(0, 0, "astronautThree", undefined, {label:'player3'} ).play('player3-idel').setFixedRotation().setVisible(false)
+      
         if(this.player){
             this.cameras.main.startFollow(this.player)
         }
 
-  
-        this.star = this.matter.add.sprite(650,0, 'star', undefined, {label:'star'})
-        this.player.setOnCollide((data:MatterJS.ICollisionPair) =>{
-            const {bodyA, bodyB} = data
-            console.log(bodyB.label)
-            if(bodyB.label !== 'star') this.isTouchingGround = true
-
-            if(bodyB.label =='star' && this.player){
-            //    this.star?.removeFromDisplayList()
-               this.currentPlayerLocation = {x:this.player?.x, y:this.player?.y}
-               this.currentPlayKey = "astronautTwo"
-               this.createPlayerTwoAnimations()
-               this.playerTwo = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautTwo").play('player2-idel').setFixedRotation()
-               this.cameras.main.stopFollow()
-               this.cameras.main.startFollow(this.playerTwo)
-               this.playerTwo.setOnCollide((data:MatterJS.ICollisionPair)=>{
-                this.isTouchingGround = true
-           })
-
-            }
+        this.player.setOnCollide((data:MatterJS.ICollisionPair)=>{
+            this.isTouchingGround = true
         })
+
+
+        const bomb = this.matter.add.image(900,0, 'bomb', undefined, {label:'bomb'})
+        const star = this.matter.add.image(500,0, 'star', undefined, {label:'star'})
+        const wings = this.matter.add.image(1300,0, 'wings', undefined, {label:'wings'})
+        const final = this.matter.add.image(3000,0, 'final', undefined, {label:'final'})
+        
+        // this.star = this.matter.add.sprite(650,0, 'star', undefined, {label:'star3'})
+        // this.star = this.matter.add.sprite(650,0, 'star', undefined, {label:'star4'})
+        // this.player.setOnCollide((data:MatterJS.ICollisionPair) =>{
+        //     const {bodyA, bodyB} = data
+        //     console.log("lable p1", bodyB.label)
+        //     if(bodyB.label !== 'star') this.isTouchingGround = true
+
+        //     if(bodyB.label =='star' && this.player){
+        //     //    this.star?.removeFromDisplayList()
+        //        this.currentPlayerLocation = {x:this.player?.x, y:this.player?.y}
+        //        this.currentPlayKey = "astronautTwo"
+        //        this.createPlayerTwoAnimations()
+        //        this.playerTwo = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautTwo").play('player2-idel').setFixedRotation()
+        //        this.cameras.main.stopFollow()
+        //        this.cameras.main.startFollow(this.playerTwo)
+
+        //        this.playerTwo.setOnCollide((data:MatterJS.ICollisionPair)=>{
+        //         this.isTouchingGround = true
+        //         })
+        //     }
+
+        //     if(bodyB.label =='star2' && this.playerTwo){
+                
+        //         this.currentPlayerLocation = {x:this.playerTwo.x, y:this.playerTwo.y}
+        //         this.currentPlayKey = "astronautTwo"
+        //         // Create New Player
+        //         this.createPlayerThreeAnimations()
+        //         this.playerThree = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautThree").play('player3-idel').setFixedRotation()
+        //         this.cameras.main.stopFollow()
+        //         this.cameras.main.startFollow(this.playerThree)
+
+
+        //     }
+
+        //     if(bodyB.label =='star3' && this.player){
+        //         //    this.star?.removeFromDisplayList()
+        //         this.currentPlayerLocation = {x:this.player?.x, y:this.player?.y}
+        //         this.currentPlayKey = "astronautTwo"
+        //         this.createPlayerTwoAnimations()
+        //         this.playerTwo = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautTwo").play('player2-idel').setFixedRotation()
+        //         this.cameras.main.stopFollow()
+        //         this.cameras.main.startFollow(this.playerTwo)
+
+    
+        //     }
+
+
+        //     if(bodyB.label =='star4' && this.player){
+        //         //    this.star?.removeFromDisplayList()
+        //         this.currentPlayerLocation = {x:this.player?.x, y:this.player?.y}
+        //         this.currentPlayKey = "astronautTwo"
+        //         this.createPlayerTwoAnimations()
+        //         this.playerTwo = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautTwo").play('player2-idel').setFixedRotation()
+        //         this.cameras.main.stopFollow()
+        //         this.cameras.main.startFollow(this.playerTwo)
+
+              
+    
+        //     }
+
+
+
+        // })
+
+        // World collision screen
+        this.matter.world.on('collisionstart', (event)=>{
+            event.pairs.forEach(pair =>{
+                const{bodyA, bodyB} = pair
+                console.log(`${bodyA.label} collided with ${bodyB.label}`)
+                if(bodyA.label === 'player1' && bodyB.label === 'star'){
+                       this.currentPlayerLocation = {x:this.player.x, y:this.player.y}
+                       this.currentPlayKey = "astronautTwo"
+                       this.createPlayerTwoAnimations()
+                       this.playerTwo = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautTwo", undefined, {label:'player2'}).play('player2-idel').setFixedRotation()
+                       this.cameras.main.stopFollow()
+                       this.cameras.main.startFollow(this.playerTwo)
+        
+                       this.playerTwo.setOnCollide((data:MatterJS.ICollisionPair)=>{
+                        this.isTouchingGround = true
+                        })
+
+                        star.destroy()
+                        
+                }
+
+
+
+                if(bodyA.label === 'bomb' && bodyB.label === 'player2' || bodyA.label === 'player2' && bodyB.label === 'bomb' ){
+                
+                    this.currentPlayerLocation = {x:this.playerTwo.x, y:this.playerTwo.y}
+                    this.currentPlayKey = "astronautThree"
+                    // Create New Player
+                    this.createPlayerThreeAnimations()
+                    this.playerThree = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautThree", undefined, {label:'player3'}).play('player3-idel').setFixedRotation()
+                    this.cameras.main.stopFollow()
+                    this.cameras.main.startFollow(this.playerThree)
+    
+                    this.playerThree.setOnCollide((data:MatterJS.ICollisionPair)=>{
+                        this.isTouchingGround = true
+                    })
+
+                    bomb.destroy()
+    
+                }
+
+                
+                if(bodyA.label === 'wings' && bodyB.label === 'player3' || bodyA.label === 'player3' && bodyB.label === 'wings' ){
+                
+                    this.currentPlayerLocation = {x:this.playerThree.x, y:this.playerThree.y}
+                    this.currentPlayKey = "astronautFour"
+                    // Create New Player
+                    this.createPlayerFourAnimations()
+                    this.playerFour = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautFour", undefined, {label:'player4'}).play('player4-idel').setFixedRotation()
+                    this.cameras.main.stopFollow()
+                    this.cameras.main.startFollow(this.playerFour)
+    
+                    this.playerFour.setOnCollide((data:MatterJS.ICollisionPair)=>{
+                        this.isTouchingGround = true
+                    })
+
+                
+                    wings.destroy()
+    
+                }
+
+                if(bodyA.label === 'final' && bodyB.label === 'player4' || bodyA.label === 'player4' && bodyB.label === 'final' ){
+                
+                    // this.currentPlayerLocation = {x:this.playerThree.x, y:this.playerThree.y}
+                    // this.currentPlayKey = "astronautFour"
+                    // // Create New Player
+                    // this.createPlayerFourAnimations()
+                    // this.playerFour = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautFour", undefined, {label:'player4'}).play('player4-idel').setFixedRotation()
+                    // this.cameras.main.stopFollow()
+                    // this.cameras.main.startFollow(this.playerFour)
+    
+                    // this.playerFour.setOnCollide((data:MatterJS.ICollisionPair)=>{
+                    //     this.isTouchingGround = true
+                    // })
+
+                
+                    final.destroy()
+    
+                }
+
+
+            })
+        })
+
+
+        
 
      
          this.cursors = this.input.keyboard.createCursorKeys()
@@ -172,6 +317,52 @@ export default class SpaceLevel extends Phaser.Scene {
         })
     }
 
+    createPlayerThreeAnimations = () =>{
+        this.anims.create({
+            key:'player3-left',
+            frames: this.anims.generateFrameNumbers("astronautThree", {start:6, end:9}),
+            frameRate:10,
+            repeat:-1
+        })
+
+        this.anims.create({
+            key:'player3-idel',
+            frames: [{key: "astronautThree", frame:4}],
+            frameRate:20
+        })
+
+        this.anims.create({
+            key:'player3-right',
+            frames: this.anims.generateFrameNumbers("astronautThree", {start:0, end:3}),
+            frameRate:10,
+            repeat:-1
+
+        })
+    }
+
+    createPlayerFourAnimations = () =>{
+        this.anims.create({
+            key:'player4-left',
+            frames: this.anims.generateFrameNumbers("astronautFour", {start:6, end:9}),
+            frameRate:10,
+            repeat:-1
+        })
+
+        this.anims.create({
+            key:'player4-idel',
+            frames: [{key: "astronautFour", frame:4}],
+            frameRate:20
+        })
+
+        this.anims.create({
+            key:'player4-right',
+            frames: this.anims.generateFrameNumbers("astronautFour", {start:0, end:3}),
+            frameRate:10,
+            repeat:-1
+
+        })
+    }
+
     handeCollectItems = (player:Phaser.GameObjects.GameObject, item: Phaser.GameObjects.GameObject) =>{
 
         const itemImage = item as Phaser.Physics.Arcade.Image
@@ -180,8 +371,7 @@ export default class SpaceLevel extends Phaser.Scene {
     }
 
     playerOneMovement = () => {
-        if(this.currentPlayKey !== 'astronaut') { 
-            this.player?.destroy() 
+        if(this.currentPlayKey === 'astronautTwo') { 
             return
         }
 
@@ -203,9 +393,8 @@ export default class SpaceLevel extends Phaser.Scene {
 
     }
 
-    update = () => {
- 
-        this.playerOneMovement()
+    playerTwoMovement = () => {
+        if(this.player){this.player.destroy()}
 
         if(this.cursors && this.cursors?.left.isDown){
             this.playerTwo?.setVelocityX(-10)
@@ -222,6 +411,56 @@ export default class SpaceLevel extends Phaser.Scene {
             this.playerTwo?.setVelocityY(-10)
             this.isTouchingGround = false
         }
+    }
+
+    playerThreeMovement = () => {
+        if(this.playerTwo) this.playerTwo.destroy()
+
+        if(this.cursors && this.cursors?.left.isDown){
+            this.playerThree?.setVelocityX(-10)
+            this.playerThree?.anims.play('player3-left', true)
+        } else if (this.cursors?.right.isDown){
+            this.playerThree?.setVelocityX(10)
+            this.playerThree?.anims.play('player3-right', true)
+        }else{
+            this.playerThree?.setVelocityX(0)
+            this.playerThree?.anims.play('player3-idel')
+        }
+
+        if(this.cursors?.up.isDown && this.isTouchingGround){
+            this.playerThree?.setVelocityY(-10)
+            this.isTouchingGround = false
+        }
+    }
+
+    playerFourMovement = () => {
+        if(this.playerTwo) this.playerThree.destroy()
+
+        if(this.cursors && this.cursors?.left.isDown){
+            this.playerFour?.setVelocityX(-10)
+            this.playerFour?.anims.play('player4-left', true)
+        } else if (this.cursors?.right.isDown){
+            this.playerFour?.setVelocityX(10)
+            this.playerFour?.anims.play('player4-right', true)
+        }else{
+            this.playerFour?.setVelocityX(0)
+            this.playerFour?.anims.play('player4-idel')
+        }
+
+        if(this.cursors?.up.isDown && this.isTouchingGround){
+            this.playerFour?.setVelocityY(-10)
+            this.isTouchingGround = false
+        }
+    }
+
+
+    update = () => {
+ 
+       if(this.currentPlayKey === `astronaut`) this.playerOneMovement()
+       if(this.currentPlayKey === `astronautTwo`) this.playerTwoMovement()
+       if(this.currentPlayKey === `astronautThree`) this.playerThreeMovement()
+       if(this.currentPlayKey === `astronautFour`)this.playerFourMovement()
+
        
 
 
