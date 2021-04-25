@@ -39,8 +39,8 @@ export default class SpaceLevel extends Phaser.Scene {
         this.load.image("star", star)
         this.load.image('asteroidTileSet', AsteroidTileSet)
         this.load.tilemapTiledJSON('tilemap', tileMap)
-        this.load.spritesheet('astronaut', astronaut, {frameWidth:9,frameHeight:16})   
-        this.load.spritesheet('astronautTwo', astronautTwo, {frameWidth:23,frameHeight:32})
+        this.load.spritesheet('astronaut', astronaut, {frameWidth:11,frameHeight:16})   
+        this.load.spritesheet('astronautTwo', astronautTwo, {frameWidth:19,frameHeight:32})
       
         
     }
