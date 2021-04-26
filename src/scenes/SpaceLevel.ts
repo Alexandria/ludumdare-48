@@ -19,6 +19,8 @@ import core from 'url:../assets/items/CAELUMCORE_Core.png'
 import heartCountThree from 'url:../assets/ui/heartCountThree.png'
 import heartCountTwo from 'url:../assets/ui/heartCountTwo.png'
 import heartCountOne from 'url:../assets/ui/heartCountOne.png'
+import heartCountZero from 'url:../assets/ui/heartCountZero.png'
+
 import itemMetterZero from 'url:../assets/ui/itemMetterZero.png'
 import itemMetterOne from 'url:../assets/ui/itemMetterOne.png'
 import itemMetterTwo from 'url:../assets/ui/itemMetterTwo.png'
@@ -88,6 +90,7 @@ export default class SpaceLevel extends Phaser.Scene {
         this.load.image("heartCountThree", heartCountThree)
         this.load.image("heartCountTwo", heartCountTwo)
         this.load.image("heartCountOne", heartCountOne)
+        this.load.image("heartCountZero", heartCountZero)
         this.load.image("itemMetterZero", itemMetterZero)
         this.load.image("itemMetterOne", itemMetterOne)
         this.load.image("itemMetterTwo", itemMetterTwo)
@@ -238,28 +241,28 @@ export default class SpaceLevel extends Phaser.Scene {
                 const{bodyA, bodyB} = pair
                 console.log({bodyB})
 
-                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpike && bodyB.label === 'player1'){          
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player1'){          
                     this.time.delayedCall(50, () =>{   
                         this.hitCount++; 
-                        this.updateHeartUI()}
-                        )
+                        this.updateHeartUI()
+                    })
                     
                     this.player.setVelocityY(-this.playerHit)
                    
-                    if(this.hitCount >=3){
-                        console.log("Hit Count",this.hitCount)
-                        // this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y)
-                        this.hitCount = 0
-                        this.updateHeartUI()
-                    }
+                    // if(this.hitCount >=3){
+                    //     console.log("Hit Count",this.hitCount)
+                    //     // this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+                    //     this.hitCount = 0
+                    //     this.updateHeartUI()
+                    // }
                     
                 }
 
-                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpike && bodyB.label === 'player2'  ){
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player2'  ){
                 //   if (this.hitCount > 2)  this.playerTwo.setPosition(this.spawnPoint.x, this.spawnPoint.y) 
                 }
                  
-                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpike && bodyB.label === 'player3'  ){
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player3'  ){
                     // if (this.hitCount > 2)  this.playerThree.setPosition(this.spawnPoint.x, this.spawnPoint.y) 
                   }
 
@@ -338,6 +341,34 @@ export default class SpaceLevel extends Phaser.Scene {
             })
         })
 
+        this.matter.world.on('collisionend', (event)=>{
+            event.pairs.forEach(pair =>{
+                const{bodyA, bodyB} = pair
+                console.log({bodyB})
+
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player1'){          
+                   
+                    if(this.hitCount >=3){
+                        console.log("Hit Count",this.hitCount)
+                        this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+                        this.hitCount = -1
+                        this.updateHeartUI()
+                        //Go to End Scene
+                    }
+                    
+                }
+
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player2'  ){
+                //   if (this.hitCount > 2)  this.playerTwo.setPosition(this.spawnPoint.x, this.spawnPoint.y) 
+                }
+                 
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player3'  ){
+                    // if (this.hitCount > 2)  this.playerThree.setPosition(this.spawnPoint.x, this.spawnPoint.y) 
+                  }
+                
+            })
+        })
+
 
         
 
@@ -347,13 +378,13 @@ export default class SpaceLevel extends Phaser.Scene {
     }
 
     private updateHeartUI = ()=> {
-        if(this.hitCount > 2){ 
+        if(this.hitCount >= 3){ 
             this.heartCountUI.setTexture('heartCountThree')
-            
         }
-        if(this.hitCount  === 0) this.heartCountUI.setTexture('heartCountThree')
+        if(this.hitCount  <= 0) this.heartCountUI.setTexture('heartCountThree')
         if(this.hitCount === 1) this.heartCountUI.setTexture('heartCountTwo')
         if(this.hitCount === 2) this.heartCountUI.setTexture('heartCountOne')
+        if(this.hitCount === 3) this.heartCountUI.setTexture('heartCountZero')
     }
 
     private updateItemUI = ()=> {
