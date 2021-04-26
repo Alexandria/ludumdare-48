@@ -22,7 +22,7 @@ export default class HowToPlayScreen extends Phaser.Scene {
       
       this.add.image(400,300,"controls").setInteractive().on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, ()=> {
         console.log("restart clicked!")
-        this.scene.start('space-level')
+        this.scene.start('story-one')
       })
 
 

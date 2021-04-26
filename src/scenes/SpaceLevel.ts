@@ -148,8 +148,8 @@ export default class SpaceLevel extends Phaser.Scene {
         
 
         // Music
-        this.sound.removeByKey('title-music');
-        const theme = this.sound.add('music',{volume: 0.1} )
+        this.sound.removeByKey('story-theme');
+        const theme = this.sound.add('music',{volume: 0.1, loop:true} )
         theme.play()
 
         // Map Level

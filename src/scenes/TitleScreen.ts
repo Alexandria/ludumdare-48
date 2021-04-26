@@ -24,14 +24,14 @@ export default class TitleScreen extends Phaser.Scene {
 
     create = () =>
     {
-      
+      const theme = this.sound.add('title-music',{volume: 0.1} )
+      theme.play()
+
       this.add.image(400,300,"titleScreen").setInteractive().on(Phaser.Input.Events.POINTER_DOWN, ()=> {
         console.log("restart clicked!")
         this.scene.start('controls')
       })
-      const theme = this.sound.add('title-music',{volume: 0.1} )
-      theme.play()
-
+     
 
     }
 
