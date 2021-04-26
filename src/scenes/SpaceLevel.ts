@@ -23,7 +23,9 @@ export default class SpaceLevel extends Phaser.Scene {
     private playerFour:Phaser.Physics.Matter.Sprite
     private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
     private camera?:Phaser.Cameras.Scene2D.Camera
-    private star?: Phaser.Physics.Matter.Sprite
+    private star: Phaser.Physics.Matter.Image
+    private bomb: Phaser.Physics.Matter.Image
+    private bombB: Phaser.Physics.Matter.Image
     private currentPlayKey = ''
     private currentPlayerLocation = {x:0, y:0}
     private playerSpeed = 8
@@ -112,7 +114,7 @@ export default class SpaceLevel extends Phaser.Scene {
          
 
         objectLayer.objects.forEach((objectData)=>{
-            const {x=0, y=0, name} = objectData
+            const {x=0, y=0, name, id} = objectData
             switch(name){
                 case'Caelum 16 SpawnPoint':
                 {
@@ -125,13 +127,33 @@ export default class SpaceLevel extends Phaser.Scene {
                     this.player.setOnCollide((data:MatterJS.ICollisionPair)=>{
                         this.isTouchingGround = true
                     })
+                    break
+                }
+                case'Caelum 32 Part':
+                {
+                    this.star = this.matter.add.image(x,y, 'star', undefined, {label:'star'})
+                    break      
+                    
+                }
+
+                case'Caelum 64 Part':
+                {
+                    this.bomb = this.matter.add.image(x,y, 'bomb', undefined, {label:'bomb'})
+                    break      
+                    
+                }
+                case'Caelum  64B Part':
+                {
+                    this.bombB = this.matter.add.image(x,y, 'bomb', undefined, {label:'bomb2'})
+                    break      
+                    
                 }
             }
         })
 
 
-        const bomb = this.matter.add.image(900,0, 'bomb', undefined, {label:'bomb'})
-        const star = this.matter.add.image(500,0, 'star', undefined, {label:'star'})
+        // const bomb = this.matter.add.image(900,0, 'bomb', undefined, {label:'bomb'})
+        // const star = this.matter.add.image(500,0, 'star', undefined, {label:'star'})
         // const wings = this.matter.add.image(1100,0, 'wings', undefined, {label:'wings'})
        
         // World collision screen
@@ -139,7 +161,7 @@ export default class SpaceLevel extends Phaser.Scene {
             event.pairs.forEach(pair =>{
                 const{bodyA, bodyB} = pair
                 console.log(`${bodyA.label} collided with ${bodyB.label}`)
-                if(bodyA.label === 'player1' && bodyB.label === 'star'){
+                if(bodyA.label === 'player1' && bodyB.label === 'star' || bodyA.label === 'star' && bodyB.label === 'player1'){
                        this.currentPlayerLocation = {x:this.player.x, y:this.player.y}
                        this.currentPlayKey = "astronautTwo"
                        this.createPlayerTwoAnimations()
@@ -151,7 +173,7 @@ export default class SpaceLevel extends Phaser.Scene {
                         this.isTouchingGround = true
                         })
 
-                        star.destroy()
+                        this.star.destroy()
                         
                 }
 
@@ -171,29 +193,48 @@ export default class SpaceLevel extends Phaser.Scene {
                         this.isTouchingGround = true
                     })
 
-                    bomb.destroy()
+                    this.bomb.destroy()
     
                 }
 
+                if(bodyA.label === 'bomb2' && bodyB.label === 'player2' || bodyA.label === 'player2' && bodyB.label === 'bomb2' ){
                 
-                if(bodyA.label === 'wings' && bodyB.label === 'player3' || bodyA.label === 'player3' && bodyB.label === 'wings' ){
-                
-                    this.currentPlayerLocation = {x:this.playerThree.x, y:this.playerThree.y}
-                    this.currentPlayKey = "astronautFour"
+                    this.currentPlayerLocation = {x:this.playerTwo.x, y:this.playerTwo.y}
+                    this.currentPlayKey = "astronautThree"
                     // Create New Player
-                    this.createPlayerFourAnimations()
-                    this.playerFour = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautFour", undefined, {label:'player4'}).play('player4-idel').setFixedRotation()
+                    this.createPlayerThreeAnimations()
+                    this.playerThree = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautThree", undefined, {label:'player3'}).play('player3-idel').setFixedRotation()
                     this.cameras.main.stopFollow()
-                    this.cameras.main.startFollow(this.playerFour)
+                    this.cameras.main.startFollow(this.playerThree)
     
-                    this.playerFour.setOnCollide((data:MatterJS.ICollisionPair)=>{
+                    this.playerThree.setOnCollide((data:MatterJS.ICollisionPair)=>{
                         this.isTouchingGround = true
                     })
 
-                
-                    wings.destroy()
+                    this.bombB.destroy()
     
                 }
+
+
+                
+                // if(bodyA.label === 'wings' && bodyB.label === 'player3' || bodyA.label === 'player3' && bodyB.label === 'wings' ){
+                
+                //     this.currentPlayerLocation = {x:this.playerThree.x, y:this.playerThree.y}
+                //     this.currentPlayKey = "astronautFour"
+                //     // Create New Player
+                //     this.createPlayerFourAnimations()
+                //     this.playerFour = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautFour", undefined, {label:'player4'}).play('player4-idel').setFixedRotation()
+                //     this.cameras.main.stopFollow()
+                //     this.cameras.main.startFollow(this.playerFour)
+    
+                //     this.playerFour.setOnCollide((data:MatterJS.ICollisionPair)=>{
+                //         this.isTouchingGround = true
+                //     })
+
+                
+                //     wings.destroy()
+    
+                // }
 
                 if(bodyA.label === 'final' && bodyB.label === 'player4' || bodyA.label === 'player4' && bodyB.label === 'final' ){
                 
