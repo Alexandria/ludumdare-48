@@ -33,7 +33,8 @@ import SpikeFixes from 'url:../assets/tilesets/CAELUM_AsterSpike_Fixes_Tileset.p
 //map json
 import tileMap from '../assets/spaceMap.json'
 
-const musicPath = require('url:../../public/ludumdareWip.wav');
+//music
+const musicPath = require('url:../assets/music/space_theme.wav');
 
 export default class SpaceLevel extends Phaser.Scene {
 
@@ -76,7 +77,6 @@ export default class SpaceLevel extends Phaser.Scene {
         
       
         this.load.image("sky", sky)
-        this.load.audio('music',  musicPath)
         this.load.image("helmet", helmet)
         this.load.image("stars", stars)
         this.load.image("planets", planets)
@@ -107,6 +107,9 @@ export default class SpaceLevel extends Phaser.Scene {
         this.load.spritesheet('astronautTwo', astronautTwo, {frameWidth:19,frameHeight:32})
         this.load.spritesheet('astronautThree', astronautThree, {frameWidth:34,frameHeight:64})
         this.load.spritesheet('astronautFour', astronautFour, {frameWidth:51,frameHeight:96})
+
+        //audio
+        this.load.audio('music',  musicPath)
       
         
     }
@@ -145,6 +148,7 @@ export default class SpaceLevel extends Phaser.Scene {
         
 
         // Music
+        this.sound.removeByKey('title-music');
         const theme = this.sound.add('music',{volume: 0.1} )
         theme.play()
 
