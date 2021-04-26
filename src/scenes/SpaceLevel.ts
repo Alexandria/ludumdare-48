@@ -80,8 +80,10 @@ export default class SpaceLevel extends Phaser.Scene {
         
 
         //Main Camera and backgound 
-        this.cameras.main.setBounds(0,0,11000,height)
-        const background = this.add.image(width*4 , height*0.5, "sky").setScrollFactor(0.5)
+        this.cameras.main.setBounds(0,0,6800,height)
+        // const background = this.add.image(width*4 , height*0.5, "sky").setScrollFactor(0.5).setDisplaySize(6400,600).
+        const background = this.add.image( width*2.6, height*0.5, "sky").setScrollFactor(0.5).setScale(0.65,1)
+
 
         // Music
         const theme = this.sound.add('music',{volume: 0.1} )
@@ -95,7 +97,7 @@ export default class SpaceLevel extends Phaser.Scene {
         const asteriodGround = map.createLayer('LEVEL 1', [tileset, spikeTileSet])
         const objectLayer = map.getObjectLayer('Object Layer 1')
         asteriodGround.setCollisionByProperty({collides:true})
-        
+
      
 
         // this.matter.world.convertTilemapLayer(backgroundLayer)
@@ -104,14 +106,10 @@ export default class SpaceLevel extends Phaser.Scene {
         
         this.matter.world.setBounds(0,0,11000,height)
 
+
         this.currentPlayKey = "astronaut"
         this.createPlayerAnimations()
-        
-
-        //this.player = this.matter.add.sprite(width * 0.5, height * 0.5, this.currentPlayKey, undefined, {label:'player1'}).play('player-idel').setFixedRotation()
-        // this.playerTwo = this.matter.add.sprite(0, 0, "astronautTwo", undefined, {label:'player2'}).play('player2-idel').setFixedRotation().setVisible(false)
-        // this.playerThree = this.matter.add.sprite(0, 0, "astronautThree", undefined, {label:'player3'} ).play('player3-idel').setFixedRotation().setVisible(false)
- 
+         
 
         objectLayer.objects.forEach((objectData)=>{
             const {x=0, y=0, name} = objectData
@@ -132,75 +130,10 @@ export default class SpaceLevel extends Phaser.Scene {
         })
 
 
-        // const bomb = this.matter.add.image(900,0, 'bomb', undefined, {label:'bomb'})
+        const bomb = this.matter.add.image(900,0, 'bomb', undefined, {label:'bomb'})
         const star = this.matter.add.image(500,0, 'star', undefined, {label:'star'})
-        const wings = this.matter.add.image(1100,0, 'wings', undefined, {label:'wings'})
-        // const final = this.matter.add.image(3000,0, 'final', undefined, {label:'final'})
-        
-        // this.star = this.matter.add.sprite(650,0, 'star', undefined, {label:'star3'})
-        // this.star = this.matter.add.sprite(650,0, 'star', undefined, {label:'star4'})
-        // this.player.setOnCollide((data:MatterJS.ICollisionPair) =>{
-        //     const {bodyA, bodyB} = data
-        //     console.log("lable p1", bodyB.label)
-        //     if(bodyB.label !== 'star') this.isTouchingGround = true
-
-        //     if(bodyB.label =='star' && this.player){
-        //     //    this.star?.removeFromDisplayList()
-        //        this.currentPlayerLocation = {x:this.player?.x, y:this.player?.y}
-        //        this.currentPlayKey = "astronautTwo"
-        //        this.createPlayerTwoAnimations()
-        //        this.playerTwo = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautTwo").play('player2-idel').setFixedRotation()
-        //        this.cameras.main.stopFollow()
-        //        this.cameras.main.startFollow(this.playerTwo)
-
-        //        this.playerTwo.setOnCollide((data:MatterJS.ICollisionPair)=>{
-        //         this.isTouchingGround = true
-        //         })
-        //     }
-
-        //     if(bodyB.label =='star2' && this.playerTwo){
-                
-        //         this.currentPlayerLocation = {x:this.playerTwo.x, y:this.playerTwo.y}
-        //         this.currentPlayKey = "astronautTwo"
-        //         // Create New Player
-        //         this.createPlayerThreeAnimations()
-        //         this.playerThree = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautThree").play('player3-idel').setFixedRotation()
-        //         this.cameras.main.stopFollow()
-        //         this.cameras.main.startFollow(this.playerThree)
-
-
-        //     }
-
-        //     if(bodyB.label =='star3' && this.player){
-        //         //    this.star?.removeFromDisplayList()
-        //         this.currentPlayerLocation = {x:this.player?.x, y:this.player?.y}
-        //         this.currentPlayKey = "astronautTwo"
-        //         this.createPlayerTwoAnimations()
-        //         this.playerTwo = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautTwo").play('player2-idel').setFixedRotation()
-        //         this.cameras.main.stopFollow()
-        //         this.cameras.main.startFollow(this.playerTwo)
-
-    
-        //     }
-
-
-        //     if(bodyB.label =='star4' && this.player){
-        //         //    this.star?.removeFromDisplayList()
-        //         this.currentPlayerLocation = {x:this.player?.x, y:this.player?.y}
-        //         this.currentPlayKey = "astronautTwo"
-        //         this.createPlayerTwoAnimations()
-        //         this.playerTwo = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautTwo").play('player2-idel').setFixedRotation()
-        //         this.cameras.main.stopFollow()
-        //         this.cameras.main.startFollow(this.playerTwo)
-
-              
-    
-        //     }
-
-
-
-        // })
-
+        // const wings = this.matter.add.image(1100,0, 'wings', undefined, {label:'wings'})
+       
         // World collision screen
         this.matter.world.on('collisionstart', (event)=>{
             event.pairs.forEach(pair =>{
