@@ -30,7 +30,7 @@ export default class GameOver extends Phaser.Scene {
         const {width, height } = this.scale
 
         this.sound.removeByKey('music');
-        const theme = this.sound.add('fail-theme',{volume: 0.1, loop:true} )
+        const theme = this.sound.add('fail-theme',{loop:true} )
         theme.play()
       
       this.add.image(400,300,"gameOverScreen")

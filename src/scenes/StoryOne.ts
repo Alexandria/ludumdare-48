@@ -21,7 +21,7 @@ export default class StoryOne extends Phaser.Scene {
     {
            //music
            this.sound.removeByKey('title-music');
-           const theme = this.sound.add('story-theme',{volume: 0.1, loop:true}, )
+           const theme = this.sound.add('story-theme',{loop:true}, )
            theme.play()
      
       this.add.image(400,300,"storyOne").setInteractive().on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, ()=> {

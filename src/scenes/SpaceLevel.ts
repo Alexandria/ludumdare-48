@@ -150,7 +150,7 @@ export default class SpaceLevel extends Phaser.Scene {
         // Music
         this.sound.removeByKey('story-theme');
         this.sound.removeByKey('fail-theme');
-        const theme = this.sound.add('music',{volume: 0.1, loop:true} )
+        const theme = this.sound.add('music',{loop:true} )
         theme.play()
 
         // Map Level
@@ -167,11 +167,8 @@ export default class SpaceLevel extends Phaser.Scene {
         this.heartCountUI = this.add.image(width*0.5,height*0.5,"heartCountThree").setScrollFactor(0)
         this.itemCountUI = this.add.image(width*0.5,height*0.5,"itemMetterZero").setScrollFactor(0)
 
-        //UI Test
-        // this.hitCount = 2
+        //UI 
         // this.updateHeartUI()
-
-        // this.itemCount = 4
         // this.updateItemUI()
 
         // this.matter.world.convertTilemapLayer(backgroundLayer)
@@ -199,8 +196,6 @@ export default class SpaceLevel extends Phaser.Scene {
                     }
 
                     this.player.setOnCollide((data:MatterJS.ICollisionPair)=>{
-                        console.log({data})
- 
                         this.isTouchingGround = true
                     })
                     break;
@@ -236,25 +231,20 @@ export default class SpaceLevel extends Phaser.Scene {
         })
 
 
-        // const jetpack = this.matter.add.image(900,0, 'jetpack', undefined, {label:'jetpack'})
-        // const helmet = this.matter.add.image(500,0, 'helmet', undefined, {label:'helmet'})
-        // const wings = this.matter.add.image(1100,0, 'wings', undefined, {label:'wings'})
-       
         // World collision screen
         this.matter.world.on('collisionstart', (event)=>{
             event.pairs.forEach(pair =>{
                 const{bodyA, bodyB} = pair
                 if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player1'){          
-                    this.time.delayedCall(10, () =>{   
+                    this.time.delayedCall(30, () =>{   
                         this.hitCount++; 
                         this.updateHeartUI()
                     })
                     
-                    
                 }
 
                 if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player2'  ){
-                    this.time.delayedCall(10, () =>{   
+                    this.time.delayedCall(30, () =>{   
                         this.hitCount++; 
                         this.updateHeartUI()
                     })
@@ -262,7 +252,7 @@ export default class SpaceLevel extends Phaser.Scene {
                 }
                  
                 if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player3'  ){
-                    this.time.delayedCall(10, () =>{   
+                    this.time.delayedCall(30, () =>{   
                         this.hitCount++; 
                         this.updateHeartUI()
                     })
@@ -333,10 +323,11 @@ export default class SpaceLevel extends Phaser.Scene {
     
                 }
 
-                if(bodyA.label === 'core' && bodyB.label === 'player4' || bodyA.label === 'player4' && bodyB.label === 'core' ){
+                if(bodyA.label === 'core' && bodyB.label === 'player3' || bodyA.label === 'player3' && bodyB.label === 'core' ){
                     this.itemCount++
                     this.updateItemUI()
                     this.core.destroy()
+                    this.scene.start('story-end')
     
                 }
 
@@ -350,8 +341,9 @@ export default class SpaceLevel extends Phaser.Scene {
                     if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player1'){          
                    
                     if(this.hitCount >2){
-                        this.scene.start('game-over')
                         this.hitCount = 0
+                        this.itemCount= 0
+                        this.scene.start('game-over')                    
                         this.updateHeartUI()
                         //Go to End Scene
                     }
@@ -359,11 +351,22 @@ export default class SpaceLevel extends Phaser.Scene {
                 }
 
                 if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player2'  ){
-                   if (this.hitCount > 2) this.scene.start('game-over');  this.hitCount = 0; this.updateHeartUI()
+                   if (this.hitCount > 2) { 
+                       this.hitCount = 0; 
+                       this.itemCount= 0; 
+                       this.scene.start('game-over'); 
+                       this.updateHeartUI() ;  
+                       this.updateItemUI()
+                    }
                 }
                  
                 if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player3'  ){
-                    if (this.hitCount > 2) this.scene.start('game-over'); this.hitCount = 0 ; this.updateHeartUI()
+                    if (this.hitCount > 2){ 
+                        this.hitCount = 0 ; 
+                        this.itemCount= 0; 
+                        this.scene.start('game-over'); 
+                        this.updateHeartUI() ;  
+                        this.updateItemUI()}
                   }
                 
             })
@@ -388,7 +391,10 @@ export default class SpaceLevel extends Phaser.Scene {
     }
 
     private updateItemUI = ()=> {
-        if(this.itemCount > 4) return
+        if(this.itemCount > 4) {
+            this.itemCount = 0
+            this.itemCountUI.setTexture('itemMetterZero')
+        }
         if(this.itemCount  === 0) this.itemCountUI.setTexture('itemMetterZero')
         if(this.itemCount === 1) this.itemCountUI.setTexture('itemMetterOne')
         if(this.itemCount === 2) this.itemCountUI.setTexture('itemMetterTwo')
@@ -530,7 +536,7 @@ export default class SpaceLevel extends Phaser.Scene {
         }
 
         if((this.cursors?.up.isDown || this.cursors?.space.isDown) && this.isTouchingGround){
-            this.playerThree?.setVelocityY(-11)
+            this.playerThree?.setVelocityY(-9)
             this.isTouchingGround = false
         }
     }
