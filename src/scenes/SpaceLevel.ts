@@ -530,7 +530,7 @@ export default class SpaceLevel extends Phaser.Scene {
         }
 
         if((this.cursors?.up.isDown || this.cursors?.space.isDown) && this.isTouchingGround){
-            this.playerThree?.setVelocityY(-12.5)
+            this.playerThree?.setVelocityY(-11.5)
             this.isTouchingGround = false
         }
     }
