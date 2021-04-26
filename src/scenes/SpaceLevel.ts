@@ -51,8 +51,8 @@ export default class SpaceLevel extends Phaser.Scene {
     private currentPlayerLocation = {x:0, y:0}
 
     // User Controls
-    private playerSpeed = 6
-    private playerJump = 9
+    private playerSpeed = 4.7
+    private playerJump = 6.5
     private playerHit = 4
 
     
