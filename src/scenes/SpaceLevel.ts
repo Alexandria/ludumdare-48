@@ -250,23 +250,23 @@ export default class SpaceLevel extends Phaser.Scene {
                         this.updateHeartUI()
                     })
                     
-                    this.player.setVelocityY(-this.playerHit)
-                   
-                    // if(this.hitCount >=3){
-                    //     console.log("Hit Count",this.hitCount)
-                    //     // this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y)
-                    //     this.hitCount = 0
-                    //     this.updateHeartUI()
-                    // }
                     
                 }
 
                 if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player2'  ){
-                //   if (this.hitCount > 2)  this.playerTwo.setPosition(this.spawnPoint.x, this.spawnPoint.y) 
+                    this.time.delayedCall(10, () =>{   
+                        this.hitCount++; 
+                        this.updateHeartUI()
+                    })
+                    
                 }
                  
                 if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player3'  ){
-                    // if (this.hitCount > 2)  this.playerThree.setPosition(this.spawnPoint.x, this.spawnPoint.y) 
+                    this.time.delayedCall(10, () =>{   
+                        this.hitCount++; 
+                        this.updateHeartUI()
+                    })
+                    
                   }
 
                 if(bodyA.bounds.min.y > 900){
@@ -465,29 +465,6 @@ export default class SpaceLevel extends Phaser.Scene {
         })
     }
 
-    createPlayerFourAnimations = () =>{
-        this.anims.create({
-            key:'player4-left',
-            frames: this.anims.generateFrameNumbers("astronautFour", {start:6, end:9}),
-            frameRate:10,
-            repeat:-1
-        })
-
-        this.anims.create({
-            key:'player4-idel',
-            frames: [{key: "astronautFour", frame:4}],
-            frameRate:20
-        })
-
-        this.anims.create({
-            key:'player4-right',
-            frames: this.anims.generateFrameNumbers("astronautFour", {start:0, end:3}),
-            frameRate:10,
-            repeat:-1
-
-        })
-    }
-
     handeCollectItems = (player:Phaser.GameObjects.GameObject, item: Phaser.GameObjects.GameObject) =>{
 
         const itemImage = item as Phaser.Physics.Arcade.Image
@@ -553,39 +530,16 @@ export default class SpaceLevel extends Phaser.Scene {
         }
 
         if((this.cursors?.up.isDown || this.cursors?.space.isDown) && this.isTouchingGround){
-            this.playerThree?.setVelocityY(-this.playerJump+2)
+            this.playerThree?.setVelocityY(-20)
             this.isTouchingGround = false
         }
     }
-
-    playerFourMovement = () => {
-        if(this.playerTwo) this.playerThree.destroy()
-
-        if(this.cursors && this.cursors?.left.isDown){
-            this.playerFour?.setVelocityX(-this.playerSpeed)
-            this.playerFour?.anims.play('player4-left', true)
-        } else if (this.cursors?.right.isDown){
-            this.playerFour?.setVelocityX(this.playerSpeed)
-            this.playerFour?.anims.play('player4-right', true)
-        }else{
-            this.playerFour?.setVelocityX(0)
-            this.playerFour?.anims.play('player4-idel')
-        }
-
-        if(this.cursors?.up.isDown && this.isTouchingGround){
-            this.playerFour?.setVelocityY(-this.playerSpeed)
-            this.isTouchingGround = false
-        }
-    }
-
 
     update = () => {
  
        if(this.currentPlayKey === `astronaut`) this.playerOneMovement()
        if(this.currentPlayKey === `astronautTwo`) this.playerTwoMovement()
        if(this.currentPlayKey === `astronautThree`) this.playerThreeMovement()
-       if(this.currentPlayKey === `astronautFour`)this.playerFourMovement()
-
        
 
 
