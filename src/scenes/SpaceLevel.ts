@@ -4,8 +4,6 @@ import astronautThree from 'url:../assets/astronaut-three.png'
 import astronautFour from 'url:../assets/astronaut-four.png'
 import astronaut from 'url:../assets/astronaut.png'
 import sky from 'url:../assets/Caelum_BG_5.png'
-import mountain from 'url:../assets/mountain.png'
-import plant from 'url:../assets/plant.png'
 import star from 'url:../assets/star.png'
 import wings from 'url:../assets/wings.png'
 import final from 'url:../assets/final.png'
@@ -28,7 +26,9 @@ export default class SpaceLevel extends Phaser.Scene {
     private bombB: Phaser.Physics.Matter.Image
     private currentPlayKey = ''
     private currentPlayerLocation = {x:0, y:0}
-    private playerSpeed = 8
+    private playerSpeed = 6
+    private playerJump = 9
+    private spawnPoint = {x:0, y:0}
 
     private isTouchingGround = false
 
@@ -39,11 +39,9 @@ export default class SpaceLevel extends Phaser.Scene {
     preload =()=>
     {
         
-
+      
         this.load.image("sky", sky)
         this.load.audio('music',  musicPath)
-        this.load.image("mountain", mountain)
-        this.load.image("plant", plant)
         this.load.image("star", star)
         this.load.image("bomb", bomb)
         this.load.image("wings", wings)
@@ -79,10 +77,11 @@ export default class SpaceLevel extends Phaser.Scene {
     create = () =>
     {
         const {width, height} = this.scale
-        
-
+        this.matter.world.setBounds(undefined, undefined,undefined,undefined,undefined,false,false,false, false)
+        console.log('walls',this.matter.world.walls)
         //Main Camera and backgound 
-        this.cameras.main.setBounds(0,0,6800,height)
+        this.cameras.main.setBounds(0,10,6800,height)
+        this.cameras.main.setScroll(0,10)
         // const background = this.add.image(width*4 , height*0.5, "sky").setScrollFactor(0.5).setDisplaySize(6400,600).
         const background = this.add.image( width*2.6, height*0.5, "sky").setScrollFactor(0.5).setScale(0.65,1)
 
@@ -95,10 +94,10 @@ export default class SpaceLevel extends Phaser.Scene {
         const map =  this.make.tilemap({key:'tilemap'})
         const tileset = map.addTilesetImage('Asteroid Platforms', 'asteroidTileSet')
         const spikeTileSet = map.addTilesetImage('Spike Asteroid Platforms', 'spikeTileSet')
-        // const backgroundLayer = map.createLayer('BG', [tileset, spikeTileSet])
-        const asteriodGround = map.createLayer('LEVEL 1', [tileset, spikeTileSet])
+        const asteriodGround = map.createLayer('LEVEL 1', [spikeTileSet, tileset])
         const objectLayer = map.getObjectLayer('Object Layer 1')
         asteriodGround.setCollisionByProperty({collides:true})
+       
 
      
 
@@ -106,7 +105,7 @@ export default class SpaceLevel extends Phaser.Scene {
         this.matter.world.convertTilemapLayer(asteriodGround)     
         // this.matter.world.convertTilemapLayer(objectLayer)
         
-        this.matter.world.setBounds(0,0,11000,height)
+        this.matter.world.setBounds(0,0,11000, 1000)
 
 
         this.currentPlayKey = "astronaut"
@@ -118,27 +117,30 @@ export default class SpaceLevel extends Phaser.Scene {
             switch(name){
                 case'Caelum 16 SpawnPoint':
                 {
-                    this.player = this.matter.add.sprite(x,y, this.currentPlayKey, undefined, {label:'player1'}).play('player-idel').setFixedRotation()
-                                    
+                    this.player = this.matter.add.sprite(x,y, this.currentPlayKey, undefined, {label:'player1', friction:0}).play('player-idel').setFixedRotation()
+                    this.spawnPoint = {x,y} 
+                
                     if(this.player){
                         this.cameras.main.startFollow(this.player)
                     }
 
                     this.player.setOnCollide((data:MatterJS.ICollisionPair)=>{
+                        console.log({data})
+
                         this.isTouchingGround = true
                     })
                     break;
                 }
                 case'Caelum 32 Part':
                 {
-                    this.star = this.matter.add.image(x,y, 'star', undefined, {label:'star'})
+                    this.star = this.matter.add.image(100,y, 'star', undefined, {label:'star'})
                     break;   
                     
                 }
 
                 case'Caelum 64 Part':
                 {
-                    this.bomb = this.matter.add.image(x,y, 'bomb', undefined, {label:'bomb'})
+                    this.bomb = this.matter.add.image(400,y, 'bomb', undefined, {label:'bomb'})
                     break;      
                     
                 }
@@ -162,12 +164,41 @@ export default class SpaceLevel extends Phaser.Scene {
         this.matter.world.on('collisionstart', (event)=>{
             event.pairs.forEach(pair =>{
                 const{bodyA, bodyB} = pair
-                console.log(`${bodyA.label} collided with ${bodyB.label}`)
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpike){
+                    console.log("Ouch! Aspike!", bodyA)
+                    if(bodyB.label === 'player1'){
+                        this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+                    }else if(bodyB.label === 'player2'){
+                        this.playerTwo.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+                    }else if(bodyB.label === 'player3'){
+                        this.playerThree.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+                    }
+                    bodyA.render.opacity = 0.5
+                    bodyB.render.opacity = 0.5
+                }
+
+                if(bodyA.bounds.min.y > 900){
+                    if(bodyB.label === 'player1'){
+                        this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+                    }else if(bodyB.label === 'player2'){
+                        this.playerTwo.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+                    }else if(bodyB.label === 'player3'){
+                        this.playerThree.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+                    }
+                    bodyA.render.opacity = 0.5
+                    bodyB.render.opacity = 0.5
+                }
+               
+                if(bodyA.gameObject !== null && bodyA.gameObject.tile !== undefined){
+                    
+                    // console.log('BodyA hasSpikes',bodyA.gameObject.tile.properties.hasSpike)
+                } 
+           
                 if(bodyA.label === 'player1' && bodyB.label === 'star' || bodyA.label === 'star' && bodyB.label === 'player1'){
                        this.currentPlayerLocation = {x:this.player.x, y:this.player.y}
                        this.currentPlayKey = "astronautTwo"
                        this.createPlayerTwoAnimations()
-                       this.playerTwo = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautTwo", undefined, {label:'player2'}).play('player2-idel').setFixedRotation()
+                       this.playerTwo = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautTwo", undefined, {label:'player2', friction:0}).play('player2-idel').setFixedRotation()
                        this.cameras.main.stopFollow()
                        this.cameras.main.startFollow(this.playerTwo)
         
@@ -187,7 +218,7 @@ export default class SpaceLevel extends Phaser.Scene {
                     this.currentPlayKey = "astronautThree"
                     // Create New Player
                     this.createPlayerThreeAnimations()
-                    this.playerThree = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautThree", undefined, {label:'player3'}).play('player3-idel').setFixedRotation()
+                    this.playerThree = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautThree", undefined, {label:'player3', friction:0 }).play('player3-idel').setFixedRotation()
                     this.cameras.main.stopFollow()
                     this.cameras.main.startFollow(this.playerThree)
     
@@ -201,18 +232,6 @@ export default class SpaceLevel extends Phaser.Scene {
 
                 if(bodyA.label === 'bomb2' && bodyB.label === 'player2' || bodyA.label === 'player2' && bodyB.label === 'bomb2' ){
                 
-                    this.currentPlayerLocation = {x:this.playerTwo.x, y:this.playerTwo.y}
-                    this.currentPlayKey = "astronautThree"
-                    // Create New Player
-                    this.createPlayerThreeAnimations()
-                    this.playerThree = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautThree", undefined, {label:'player3'}).play('player3-idel').setFixedRotation()
-                    this.cameras.main.stopFollow()
-                    this.cameras.main.startFollow(this.playerThree)
-    
-                    this.playerThree.setOnCollide((data:MatterJS.ICollisionPair)=>{
-                        this.isTouchingGround = true
-                    })
-
                     this.bombB.destroy()
     
                 }
@@ -384,8 +403,8 @@ export default class SpaceLevel extends Phaser.Scene {
             this.player?.anims.play('player1-idel')
         }
 
-        if(this.cursors?.up.isDown && this.isTouchingGround){
-            this.player?.setVelocityY(-this.playerSpeed)
+        if((this.cursors?.up.isDown || this.cursors?.space.isDown) && this.isTouchingGround){
+            this.player?.setVelocityY(-this.playerJump)
             this.isTouchingGround = false
         }
 
@@ -405,8 +424,8 @@ export default class SpaceLevel extends Phaser.Scene {
             this.playerTwo?.anims.play('player2-idel')
         }
 
-        if(this.cursors?.up.isDown && this.isTouchingGround){
-            this.playerTwo?.setVelocityY(-this.playerSpeed)
+        if((this.cursors?.up.isDown || this.cursors?.space.isDown) && this.isTouchingGround){
+            this.playerTwo?.setVelocityY(-this.playerJump)
             this.isTouchingGround = false
         }
     }
