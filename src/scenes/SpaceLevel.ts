@@ -4,6 +4,10 @@ import astronautThree from 'url:../assets/astronaut-three.png'
 import astronautFour from 'url:../assets/astronaut-four.png'
 import astronaut from 'url:../assets/astronaut.png'
 import sky from 'url:../assets/Caelum_BG_5.png'
+import stars from 'url:../assets/Caelum_BG_4.png'
+import planets from 'url:../assets/Caelum_BG_3.png'
+import suns from 'url:../assets/Caelum_BG_2.png'
+import ship from 'url:../assets/Caelum_BG_1.png'
 import star from 'url:../assets/star.png'
 import wings from 'url:../assets/wings.png'
 import final from 'url:../assets/final.png'
@@ -43,6 +47,10 @@ export default class SpaceLevel extends Phaser.Scene {
         this.load.image("sky", sky)
         this.load.audio('music',  musicPath)
         this.load.image("star", star)
+        this.load.image("stars", stars)
+        this.load.image("planets", planets)
+        this.load.image("suns", suns)
+        this.load.image("ship", ship)
         this.load.image("bomb", bomb)
         this.load.image("wings", wings)
         this.load.image("final", final)
@@ -80,11 +88,19 @@ export default class SpaceLevel extends Phaser.Scene {
         this.matter.world.setBounds(undefined, undefined,undefined,undefined,undefined,false,false,false, false)
         console.log('walls',this.matter.world.walls)
         //Main Camera and backgound 
-        this.cameras.main.setBounds(0,10,6800,height)
-        this.cameras.main.setScroll(0,10)
+        this.cameras.main.setBounds(0,0,6800,height)
         // const background = this.add.image(width*4 , height*0.5, "sky").setScrollFactor(0.5).setDisplaySize(6400,600).
-        const background = this.add.image( width*2.6, height*0.5, "sky").setScrollFactor(0.5).setScale(0.65,1)
+        const background = this.add.image( width*2.6, height*0.5, "sky").setScrollFactor(0.1).setScale(0.65,1)
+        this.add.image( width*2.6, height*0.5, "stars").setScrollFactor(0.2).setScale(0.65,1)
+        this.add.image( width*1.7, height*0.5, "planets").setScrollFactor(0.3).setScale(0.45,1)
+        this.add.image( width*1.8, height*0.5, "suns").setScrollFactor(0.5).setScale(0.45,1)
+        this.add.image( width*1.8, height*0.5, "ship").setScrollFactor(0.5).setScale(1,1)
 
+
+        // this.add.image( width*2.6, height*0.5, "stars").setScrollFactor(0.9).setScale(0.65,1)
+        // this.add.image( width*1.7, height*0.5, "planets").setScrollFactor(0.5).setScale(0.45,1)
+        // this.add.image( width*1.8, height*0.5, "suns").setScrollFactor(0.3).setScale(0.45,1)
+        // this.add.image( width*4, height*0.5, "ship").setScrollFactor(0.2).setScale(1,1)
 
         // Music
         const theme = this.sound.add('music',{volume: 0.1} )
@@ -105,7 +121,7 @@ export default class SpaceLevel extends Phaser.Scene {
         this.matter.world.convertTilemapLayer(asteriodGround)     
         // this.matter.world.convertTilemapLayer(objectLayer)
         
-        this.matter.world.setBounds(0,0,11000, 1000)
+        this.matter.world.setBounds(0,0,11000, 600)
 
 
         this.currentPlayKey = "astronaut"
