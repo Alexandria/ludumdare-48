@@ -68,7 +68,7 @@ export default class SpaceLevel extends Phaser.Scene {
     private isTouchingGround = false
 
     constructor(){
-        super('hello-world')
+        super('space-level')
     }
 
     preload =()=>
@@ -132,7 +132,7 @@ export default class SpaceLevel extends Phaser.Scene {
     {
         const {width, height} = this.scale
         this.matter.world.setBounds(undefined, undefined,undefined,undefined,undefined,false,false,false, false)
-        console.log('walls',this.matter.world.walls)
+    
         //Main Camera and backgound 
         this.cameras.main.setBounds(0,0,6800,height)
         // const background = this.add.image(width*4 , height*0.5, "sky").setScrollFactor(0.5).setDisplaySize(6400,600).
@@ -219,7 +219,7 @@ export default class SpaceLevel extends Phaser.Scene {
                     break ;     
                     
                 }
-                case'core':
+                case'Core Part':
                 {
                     this.core = this.matter.add.image(x,y, 'core', undefined, {label:'core', friction:100})
                     break ;     
@@ -239,10 +239,8 @@ export default class SpaceLevel extends Phaser.Scene {
         this.matter.world.on('collisionstart', (event)=>{
             event.pairs.forEach(pair =>{
                 const{bodyA, bodyB} = pair
-                console.log({bodyB})
-
                 if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player1'){          
-                    this.time.delayedCall(50, () =>{   
+                    this.time.delayedCall(10, () =>{   
                         this.hitCount++; 
                         this.updateHeartUI()
                     })
@@ -344,14 +342,11 @@ export default class SpaceLevel extends Phaser.Scene {
         this.matter.world.on('collisionend', (event)=>{
             event.pairs.forEach(pair =>{
                 const{bodyA, bodyB} = pair
-                console.log({bodyB})
-
-                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player1'){          
+                    if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player1'){          
                    
-                    if(this.hitCount >=3){
-                        console.log("Hit Count",this.hitCount)
-                        this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y)
-                        this.hitCount = -1
+                    if(this.hitCount >2){
+                        this.scene.start('game-over')
+                        this.hitCount = 0
                         this.updateHeartUI()
                         //Go to End Scene
                     }
@@ -359,11 +354,11 @@ export default class SpaceLevel extends Phaser.Scene {
                 }
 
                 if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player2'  ){
-                //   if (this.hitCount > 2)  this.playerTwo.setPosition(this.spawnPoint.x, this.spawnPoint.y) 
+                   if (this.hitCount > 2) this.scene.start('game-over')
                 }
                  
                 if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player3'  ){
-                    // if (this.hitCount > 2)  this.playerThree.setPosition(this.spawnPoint.x, this.spawnPoint.y) 
+                    if (this.hitCount > 2) this.scene.start('game-over')
                   }
                 
             })
@@ -384,7 +379,7 @@ export default class SpaceLevel extends Phaser.Scene {
         if(this.hitCount  <= 0) this.heartCountUI.setTexture('heartCountThree')
         if(this.hitCount === 1) this.heartCountUI.setTexture('heartCountTwo')
         if(this.hitCount === 2) this.heartCountUI.setTexture('heartCountOne')
-        if(this.hitCount === 3) this.heartCountUI.setTexture('heartCountZero')
+        if(this.hitCount === 3){ this.heartCountUI.setTexture('heartCountZero')}
     }
 
     private updateItemUI = ()=> {
