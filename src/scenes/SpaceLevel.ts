@@ -1,27 +1,34 @@
 import Phaser from 'phaser'
-import astronautTwo from 'url:../assets/astronaut-two.png'
-import astronautThree from 'url:../assets/astronaut-three.png'
-import astronautFour from 'url:../assets/astronaut-four.png'
-import astronaut from 'url:../assets/astronaut.png'
-import sky from 'url:../assets/Caelum_BG_5.png'
-import stars from 'url:../assets/Caelum_BG_4.png'
-import planets from 'url:../assets/Caelum_BG_3.png'
-import suns from 'url:../assets/Caelum_BG_2.png'
-import ship from 'url:../assets/Caelum_BG_1.png'
-import helmet from 'url:../assets/CAELUMCORE_Helmet.png'
-import jetpack from "url:../assets/CAELUMCORE_Jetpack.png"
-import boots from "url:../assets/CAELUMCORE_Boots.png"
-import core from 'url:../assets/CAELUMCORE_Core.png'
-import heartCountThree from 'url:../assets/heartCountThree.png'
-import heartCountTwo from 'url:../assets/heartCountTwo.png'
-import heartCountOne from 'url:../assets/heartCountOne.png'
-import itemMetterZero from 'url:../assets/itemMetterZero.png'
-import itemMetterOne from 'url:../assets/itemMetterOne.png'
-import itemMetterTwo from 'url:../assets/itemMetterTwo.png'
-import itemMetterThree from 'url:../assets/itemMetterThree.png'
-import itemMetterFour from 'url:../assets/itemMetterFour.png'
-import AsteroidTileSet from 'url:../assets/CAELUMCORE_Asteroid_Tileset.png'
-import SpikeTileSet from 'url:../assets/CAELUMCORE_SpikeAsteroid_TileSet.png'
+//players
+import astronautTwo from 'url:../assets/players/astronaut-two.png'
+import astronautThree from 'url:../assets/players/astronaut-three.png'
+import astronautFour from 'url:../assets/players/astronaut-four.png'
+import astronaut from 'url:../assets/players/astronaut.png'
+//background
+import sky from 'url:../assets/backgrounds/Caelum_BG_5.png'
+import stars from 'url:../assets/backgrounds/Caelum_BG_4.png'
+import planets from 'url:../assets/backgrounds/Caelum_BG_3.png'
+import suns from 'url:../assets/backgrounds/Caelum_BG_2.png'
+import ship from 'url:../assets/backgrounds/Caelum_BG_1.png'
+//items
+import helmet from 'url:../assets/items/CAELUMCORE_Helmet.png'
+import jetpack from "url:../assets/items/CAELUMCORE_Jetpack.png"
+import boots from "url:../assets/items/CAELUMCORE_Boots.png"
+import core from 'url:../assets/items/CAELUMCORE_Core.png'
+//ui
+import heartCountThree from 'url:../assets/ui/heartCountThree.png'
+import heartCountTwo from 'url:../assets/ui/heartCountTwo.png'
+import heartCountOne from 'url:../assets/ui/heartCountOne.png'
+import itemMetterZero from 'url:../assets/ui/itemMetterZero.png'
+import itemMetterOne from 'url:../assets/ui/itemMetterOne.png'
+import itemMetterTwo from 'url:../assets/ui/itemMetterTwo.png'
+import itemMetterThree from 'url:../assets/ui/itemMetterThree.png'
+import itemMetterFour from 'url:../assets/ui/itemMetterFour.png'
+//tileset
+import AsteroidTileSet from 'url:../assets/tilesets/CAELUMCORE_Asteroid_Tileset.png'
+import SpikeTileSet from 'url:../assets/tilesets/CAELUMCORE_SpikeAsteroid_TileSet.png'
+import SpikeFixes from 'url:../assets/tilesets/CAELUM_AsterSpike_Fixes_Tileset.png'
+//map json
 import tileMap from '../assets/spaceMap.json'
 
 const musicPath = require('url:../../public/ludumdareWip.wav');
@@ -87,8 +94,11 @@ export default class SpaceLevel extends Phaser.Scene {
         this.load.image("itemMetterThree", itemMetterThree)
         this.load.image("itemMetterFour", itemMetterFour)
 
+        //tilesets
         this.load.image('asteroidTileSet', AsteroidTileSet)
         this.load.image('spikeTileSet', SpikeTileSet)
+        this.load.image('spikeFixes', SpikeFixes)
+
         this.load.tilemapTiledJSON('tilemap', tileMap)
         this.load.spritesheet('astronaut', astronaut, {frameWidth:11,frameHeight:16})   
         this.load.spritesheet('astronautTwo', astronautTwo, {frameWidth:19,frameHeight:32})
@@ -129,11 +139,7 @@ export default class SpaceLevel extends Phaser.Scene {
         this.add.image( width*1.8, height*0.5, "suns").setScrollFactor(0.5).setScale(0.45,1)
         this.add.image( width*1.8, height*0.5, "ship").setScrollFactor(0.5).setScale(1,1)
         
-
-        // this.add.image( width*2.6, height*0.5, "stars").setScrollFactor(0.9).setScale(0.65,1)
-        // this.add.image( width*1.7, height*0.5, "planets").setScrollFactor(0.5).setScale(0.45,1)
-        // this.add.image( width*1.8, height*0.5, "suns").setScrollFactor(0.3).setScale(0.45,1)
-        // this.add.image( width*4, height*0.5, "ship").setScrollFactor(0.2).setScale(1,1)
+        
 
         // Music
         const theme = this.sound.add('music',{volume: 0.1} )
@@ -143,7 +149,8 @@ export default class SpaceLevel extends Phaser.Scene {
         const map =  this.make.tilemap({key:'tilemap'})
         const tileset = map.addTilesetImage('Asteroid Platforms', 'asteroidTileSet')
         const spikeTileSet = map.addTilesetImage('Spike Asteroid Platforms', 'spikeTileSet')
-        const asteriodGround = map.createLayer('LEVEL 1', [spikeTileSet, tileset])
+        const spikeTileFix = map.addTilesetImage('AsterSpike Fixes', 'spikeFixes')
+        const asteriodGround = map.createLayer('LEVEL 1', [spikeTileSet, tileset,spikeTileFix])
         const objectLayer = map.getObjectLayer('Object Layer 1')
         asteriodGround.setCollisionByProperty({collides:true})
        
