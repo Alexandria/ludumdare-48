@@ -1,20 +1,38 @@
 import Phaser from 'phaser'
-import astronautTwo from 'url:../assets/astronaut-two.png'
-import astronautThree from 'url:../assets/astronaut-three.png'
-import astronautFour from 'url:../assets/astronaut-four.png'
-import astronaut from 'url:../assets/astronaut.png'
-import sky from 'url:../assets/Caelum_BG_5.png'
-import stars from 'url:../assets/Caelum_BG_4.png'
-import planets from 'url:../assets/Caelum_BG_3.png'
-import suns from 'url:../assets/Caelum_BG_2.png'
-import ship from 'url:../assets/Caelum_BG_1.png'
-import star from 'url:../assets/star.png'
-import wings from 'url:../assets/wings.png'
-import final from 'url:../assets/final.png'
-import AsteroidTileSet from 'url:../assets/CAELUMCORE_Asteroid_Tileset.png'
-import SpikeTileSet from 'url:../assets/CAELUMCORE_SpikeAsteroid_TileSet.png'
+//players
+import astronautTwo from 'url:../assets/players/astronaut-two.png'
+import astronautThree from 'url:../assets/players/astronaut-three.png'
+import astronautFour from 'url:../assets/players/astronaut-four.png'
+import astronaut from 'url:../assets/players/astronaut.png'
+//background
+import sky from 'url:../assets/backgrounds/Caelum_BG_5.png'
+import stars from 'url:../assets/backgrounds/Caelum_BG_4.png'
+import planets from 'url:../assets/backgrounds/Caelum_BG_3.png'
+import suns from 'url:../assets/backgrounds/Caelum_BG_2.png'
+import ship from 'url:../assets/backgrounds/Caelum_BG_1.png'
+//items
+import helmet from 'url:../assets/items/CAELUMCORE_Helmet.png'
+import jetpack from "url:../assets/items/CAELUMCORE_Jetpack.png"
+import boots from "url:../assets/items/CAELUMCORE_Boots.png"
+import core from 'url:../assets/items/CAELUMCORE_Core.png'
+//ui
+import heartCountThree from 'url:../assets/ui/heartCountThree.png'
+import heartCountTwo from 'url:../assets/ui/heartCountTwo.png'
+import heartCountOne from 'url:../assets/ui/heartCountOne.png'
+import heartCountZero from 'url:../assets/ui/heartCountZero.png'
+
+import itemMetterZero from 'url:../assets/ui/itemMetterZero.png'
+import itemMetterOne from 'url:../assets/ui/itemMetterOne.png'
+import itemMetterTwo from 'url:../assets/ui/itemMetterTwo.png'
+import itemMetterThree from 'url:../assets/ui/itemMetterThree.png'
+import itemMetterFour from 'url:../assets/ui/itemMetterFour.png'
+//tileset
+import AsteroidTileSet from 'url:../assets/tilesets/CAELUMCORE_Asteroid_Tileset.png'
+import SpikeTileSet from 'url:../assets/tilesets/CAELUMCORE_SpikeAsteroid_TileSet.png'
+import SpikeFixes from 'url:../assets/tilesets/CAELUM_AsterSpike_Fixes_Tileset.png'
+//map json
 import tileMap from '../assets/spaceMap.json'
-import bomb from "url:../assets/bomb.png"
+
 const musicPath = require('url:../../public/ludumdareWip.wav');
 
 export default class SpaceLevel extends Phaser.Scene {
@@ -25,14 +43,27 @@ export default class SpaceLevel extends Phaser.Scene {
     private playerFour:Phaser.Physics.Matter.Sprite
     private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
     private camera?:Phaser.Cameras.Scene2D.Camera
-    private star: Phaser.Physics.Matter.Image
-    private bomb: Phaser.Physics.Matter.Image
-    private bombB: Phaser.Physics.Matter.Image
+    private helmet: Phaser.Physics.Matter.Image
+    private jetpack: Phaser.Physics.Matter.Image
+    private boots: Phaser.Physics.Matter.Image
+    private core:Phaser.Physics.Matter.Image
+    private heartCountUI: Phaser.GameObjects.Image
+    private itemCountUI: Phaser.GameObjects.Image
     private currentPlayKey = ''
     private currentPlayerLocation = {x:0, y:0}
-    private playerSpeed = 6
-    private playerJump = 9
+
+    // User Controls
+    private playerSpeed = 4.7
+    private playerJump = 6.5
+    private playerHit = 4
+
+    
+
     private spawnPoint = {x:0, y:0}
+
+    //UI State
+    private hitCount = 0
+    private itemCount = 0
 
     private isTouchingGround = false
 
@@ -46,16 +77,31 @@ export default class SpaceLevel extends Phaser.Scene {
       
         this.load.image("sky", sky)
         this.load.audio('music',  musicPath)
-        this.load.image("star", star)
+        this.load.image("helmet", helmet)
         this.load.image("stars", stars)
         this.load.image("planets", planets)
         this.load.image("suns", suns)
         this.load.image("ship", ship)
-        this.load.image("bomb", bomb)
-        this.load.image("wings", wings)
-        this.load.image("final", final)
+        this.load.image("jetpack", jetpack)
+        this.load.image("boots", boots)
+        this.load.image("core", core)
+
+        //UI
+        this.load.image("heartCountThree", heartCountThree)
+        this.load.image("heartCountTwo", heartCountTwo)
+        this.load.image("heartCountOne", heartCountOne)
+        this.load.image("heartCountZero", heartCountZero)
+        this.load.image("itemMetterZero", itemMetterZero)
+        this.load.image("itemMetterOne", itemMetterOne)
+        this.load.image("itemMetterTwo", itemMetterTwo)
+        this.load.image("itemMetterThree", itemMetterThree)
+        this.load.image("itemMetterFour", itemMetterFour)
+
+        //tilesets
         this.load.image('asteroidTileSet', AsteroidTileSet)
         this.load.image('spikeTileSet', SpikeTileSet)
+        this.load.image('spikeFixes', SpikeFixes)
+
         this.load.tilemapTiledJSON('tilemap', tileMap)
         this.load.spritesheet('astronaut', astronaut, {frameWidth:11,frameHeight:16})   
         this.load.spritesheet('astronautTwo', astronautTwo, {frameWidth:19,frameHeight:32})
@@ -95,12 +141,8 @@ export default class SpaceLevel extends Phaser.Scene {
         this.add.image( width*1.7, height*0.5, "planets").setScrollFactor(0.3).setScale(0.45,1)
         this.add.image( width*1.8, height*0.5, "suns").setScrollFactor(0.5).setScale(0.45,1)
         this.add.image( width*1.8, height*0.5, "ship").setScrollFactor(0.5).setScale(1,1)
-
-
-        // this.add.image( width*2.6, height*0.5, "stars").setScrollFactor(0.9).setScale(0.65,1)
-        // this.add.image( width*1.7, height*0.5, "planets").setScrollFactor(0.5).setScale(0.45,1)
-        // this.add.image( width*1.8, height*0.5, "suns").setScrollFactor(0.3).setScale(0.45,1)
-        // this.add.image( width*4, height*0.5, "ship").setScrollFactor(0.2).setScale(1,1)
+        
+        
 
         // Music
         const theme = this.sound.add('music',{volume: 0.1} )
@@ -110,12 +152,22 @@ export default class SpaceLevel extends Phaser.Scene {
         const map =  this.make.tilemap({key:'tilemap'})
         const tileset = map.addTilesetImage('Asteroid Platforms', 'asteroidTileSet')
         const spikeTileSet = map.addTilesetImage('Spike Asteroid Platforms', 'spikeTileSet')
-        const asteriodGround = map.createLayer('LEVEL 1', [spikeTileSet, tileset])
+        const spikeTileFix = map.addTilesetImage('AsterSpike Fixes', 'spikeFixes')
+        const asteriodGround = map.createLayer('LEVEL 1', [spikeTileSet, tileset,spikeTileFix])
         const objectLayer = map.getObjectLayer('Object Layer 1')
         asteriodGround.setCollisionByProperty({collides:true})
        
 
-     
+        //UI 
+        this.heartCountUI = this.add.image(width*0.5,height*0.5,"heartCountThree").setScrollFactor(0)
+        this.itemCountUI = this.add.image(width*0.5,height*0.5,"itemMetterZero").setScrollFactor(0)
+
+        //UI Test
+        // this.hitCount = 2
+        // this.updateHeartUI()
+
+        // this.itemCount = 4
+        // this.updateItemUI()
 
         // this.matter.world.convertTilemapLayer(backgroundLayer)
         this.matter.world.convertTilemapLayer(asteriodGround)     
@@ -135,6 +187,7 @@ export default class SpaceLevel extends Phaser.Scene {
                 {
                     this.player = this.matter.add.sprite(x,y, this.currentPlayKey, undefined, {label:'player1', friction:0}).play('player-idel').setFixedRotation()
                     this.spawnPoint = {x,y} 
+              
                 
                     if(this.player){
                         this.cameras.main.startFollow(this.player)
@@ -142,27 +195,33 @@ export default class SpaceLevel extends Phaser.Scene {
 
                     this.player.setOnCollide((data:MatterJS.ICollisionPair)=>{
                         console.log({data})
-
+ 
                         this.isTouchingGround = true
                     })
                     break;
                 }
                 case'Caelum 32 Part':
                 {
-                    this.star = this.matter.add.image(x,y, 'star', undefined, {label:'star'})
+                    this.helmet = this.matter.add.image(x,y, 'helmet', undefined, {label:'helmet', friction:100})
                     break;   
                     
                 }
 
                 case'Caelum 64 Part':
                 {
-                    this.bomb = this.matter.add.image(x,y, 'bomb', undefined, {label:'bomb'})
+                    this.jetpack = this.matter.add.image(x,y, 'jetpack', undefined, {label:'jetpack', friction:100})
                     break;      
                     
                 }
                 case'Caelum  64B Part':
                 {
-                    this.bombB = this.matter.add.image(x,y, 'bomb', undefined, {label:'bomb2'})
+                    this.boots = this.matter.add.image(x+90,y, 'boots', undefined, {label:'boots', friction:100})
+                    break ;     
+                    
+                }
+                case'core':
+                {
+                    this.core = this.matter.add.image(x,y, 'core', undefined, {label:'core', friction:100})
                     break ;     
                     
                 }
@@ -172,26 +231,40 @@ export default class SpaceLevel extends Phaser.Scene {
         })
 
 
-        // const bomb = this.matter.add.image(900,0, 'bomb', undefined, {label:'bomb'})
-        // const star = this.matter.add.image(500,0, 'star', undefined, {label:'star'})
+        // const jetpack = this.matter.add.image(900,0, 'jetpack', undefined, {label:'jetpack'})
+        // const helmet = this.matter.add.image(500,0, 'helmet', undefined, {label:'helmet'})
         // const wings = this.matter.add.image(1100,0, 'wings', undefined, {label:'wings'})
        
         // World collision screen
         this.matter.world.on('collisionstart', (event)=>{
             event.pairs.forEach(pair =>{
                 const{bodyA, bodyB} = pair
-                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpike){
-                    console.log("Ouch! Aspike!", bodyA)
-                    if(bodyB.label === 'player1'){
-                        this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y)
-                    }else if(bodyB.label === 'player2'){
-                        this.playerTwo.setPosition(this.spawnPoint.x, this.spawnPoint.y)
-                    }else if(bodyB.label === 'player3'){
-                        this.playerThree.setPosition(this.spawnPoint.x, this.spawnPoint.y)
-                    }
-                    bodyA.render.opacity = 0.5
-                    bodyB.render.opacity = 0.5
+                console.log({bodyB})
+
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player1'){          
+                    this.time.delayedCall(50, () =>{   
+                        this.hitCount++; 
+                        this.updateHeartUI()
+                    })
+                    
+                    this.player.setVelocityY(-this.playerHit)
+                   
+                    // if(this.hitCount >=3){
+                    //     console.log("Hit Count",this.hitCount)
+                    //     // this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+                    //     this.hitCount = 0
+                    //     this.updateHeartUI()
+                    // }
+                    
                 }
+
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player2'  ){
+                //   if (this.hitCount > 2)  this.playerTwo.setPosition(this.spawnPoint.x, this.spawnPoint.y) 
+                }
+                 
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player3'  ){
+                    // if (this.hitCount > 2)  this.playerThree.setPosition(this.spawnPoint.x, this.spawnPoint.y) 
+                  }
 
                 if(bodyA.bounds.min.y > 900){
                     if(bodyB.label === 'player1'){
@@ -210,7 +283,7 @@ export default class SpaceLevel extends Phaser.Scene {
                     // console.log('BodyA hasSpikes',bodyA.gameObject.tile.properties.hasSpike)
                 } 
            
-                if(bodyA.label === 'player1' && bodyB.label === 'star' || bodyA.label === 'star' && bodyB.label === 'player1'){
+                if(bodyA.label === 'player1' && bodyB.label === 'helmet' || bodyA.label === 'helmet' && bodyB.label === 'player1'){
                        this.currentPlayerLocation = {x:this.player.x, y:this.player.y}
                        this.currentPlayKey = "astronautTwo"
                        this.createPlayerTwoAnimations()
@@ -221,14 +294,16 @@ export default class SpaceLevel extends Phaser.Scene {
                        this.playerTwo.setOnCollide((data:MatterJS.ICollisionPair)=>{
                         this.isTouchingGround = true
                         })
-
-                        this.star.destroy()
+                        
+                        this.itemCount++
+                        this.updateItemUI()
+                        this.helmet.destroy()
                         
                 }
 
 
 
-                if(bodyA.label === 'bomb' && bodyB.label === 'player2' || bodyA.label === 'player2' && bodyB.label === 'bomb' ){
+                if(bodyA.label === 'jetpack' && bodyB.label === 'player2' || bodyA.label === 'player2' && bodyB.label === 'jetpack' ){
                 
                     this.currentPlayerLocation = {x:this.playerTwo.x, y:this.playerTwo.y}
                     this.currentPlayKey = "astronautThree"
@@ -242,57 +317,55 @@ export default class SpaceLevel extends Phaser.Scene {
                         this.isTouchingGround = true
                     })
 
-                    this.bomb.destroy()
+                    this.itemCount++
+                    this.updateItemUI()
+                    this.jetpack.destroy()
     
                 }
 
-                if(bodyA.label === 'bomb2' && bodyB.label === 'player2' || bodyA.label === 'player2' && bodyB.label === 'bomb2' ){
-                
-                    this.bombB.destroy()
+                if(bodyA.label === 'boots' && bodyB.label === 'player3' || bodyA.label === 'player3' && bodyB.label === 'boots' ){
+                    this.itemCount++
+                    this.updateItemUI()
+                    this.boots.destroy()
     
                 }
 
-
-                
-                // if(bodyA.label === 'wings' && bodyB.label === 'player3' || bodyA.label === 'player3' && bodyB.label === 'wings' ){
-                
-                //     this.currentPlayerLocation = {x:this.playerThree.x, y:this.playerThree.y}
-                //     this.currentPlayKey = "astronautFour"
-                //     // Create New Player
-                //     this.createPlayerFourAnimations()
-                //     this.playerFour = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautFour", undefined, {label:'player4'}).play('player4-idel').setFixedRotation()
-                //     this.cameras.main.stopFollow()
-                //     this.cameras.main.startFollow(this.playerFour)
-    
-                //     this.playerFour.setOnCollide((data:MatterJS.ICollisionPair)=>{
-                //         this.isTouchingGround = true
-                //     })
-
-                
-                //     wings.destroy()
-    
-                // }
-
-                if(bodyA.label === 'final' && bodyB.label === 'player4' || bodyA.label === 'player4' && bodyB.label === 'final' ){
-                
-                    // this.currentPlayerLocation = {x:this.playerThree.x, y:this.playerThree.y}
-                    // this.currentPlayKey = "astronautFour"
-                    // // Create New Player
-                    // this.createPlayerFourAnimations()
-                    // this.playerFour = this.matter.add.sprite(this.currentPlayerLocation.x, this.currentPlayerLocation.y, "astronautFour", undefined, {label:'player4'}).play('player4-idel').setFixedRotation()
-                    // this.cameras.main.stopFollow()
-                    // this.cameras.main.startFollow(this.playerFour)
-    
-                    // this.playerFour.setOnCollide((data:MatterJS.ICollisionPair)=>{
-                    //     this.isTouchingGround = true
-                    // })
-
-                
-                    final.destroy()
+                if(bodyA.label === 'core' && bodyB.label === 'player4' || bodyA.label === 'player4' && bodyB.label === 'core' ){
+                    this.itemCount++
+                    this.updateItemUI()
+                    this.core.destroy()
     
                 }
 
 
+            })
+        })
+
+        this.matter.world.on('collisionend', (event)=>{
+            event.pairs.forEach(pair =>{
+                const{bodyA, bodyB} = pair
+                console.log({bodyB})
+
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player1'){          
+                   
+                    if(this.hitCount >=3){
+                        console.log("Hit Count",this.hitCount)
+                        this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+                        this.hitCount = -1
+                        this.updateHeartUI()
+                        //Go to End Scene
+                    }
+                    
+                }
+
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player2'  ){
+                //   if (this.hitCount > 2)  this.playerTwo.setPosition(this.spawnPoint.x, this.spawnPoint.y) 
+                }
+                 
+                if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player3'  ){
+                    // if (this.hitCount > 2)  this.playerThree.setPosition(this.spawnPoint.x, this.spawnPoint.y) 
+                  }
+                
             })
         })
 
@@ -302,6 +375,25 @@ export default class SpaceLevel extends Phaser.Scene {
      
          this.cursors = this.input.keyboard.createCursorKeys()
       
+    }
+
+    private updateHeartUI = ()=> {
+        if(this.hitCount >= 3){ 
+            this.heartCountUI.setTexture('heartCountThree')
+        }
+        if(this.hitCount  <= 0) this.heartCountUI.setTexture('heartCountThree')
+        if(this.hitCount === 1) this.heartCountUI.setTexture('heartCountTwo')
+        if(this.hitCount === 2) this.heartCountUI.setTexture('heartCountOne')
+        if(this.hitCount === 3) this.heartCountUI.setTexture('heartCountZero')
+    }
+
+    private updateItemUI = ()=> {
+        if(this.itemCount > 4) return
+        if(this.itemCount  === 0) this.itemCountUI.setTexture('itemMetterZero')
+        if(this.itemCount === 1) this.itemCountUI.setTexture('itemMetterOne')
+        if(this.itemCount === 2) this.itemCountUI.setTexture('itemMetterTwo')
+        if(this.itemCount === 3) this.itemCountUI.setTexture('itemMetterThree')
+        if(this.itemCount === 4) this.itemCountUI.setTexture('itemMetterFour')
     }
 
     private createPlayerAnimations = () =>{
@@ -460,8 +552,8 @@ export default class SpaceLevel extends Phaser.Scene {
             this.playerThree?.anims.play('player3-idel')
         }
 
-        if(this.cursors?.up.isDown && this.isTouchingGround){
-            this.playerThree?.setVelocityY(-this.playerSpeed)
+        if((this.cursors?.up.isDown || this.cursors?.space.isDown) && this.isTouchingGround){
+            this.playerThree?.setVelocityY(-this.playerJump+2)
             this.isTouchingGround = false
         }
     }
