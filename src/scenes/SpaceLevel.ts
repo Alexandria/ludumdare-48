@@ -88,7 +88,7 @@ export default class SpaceLevel extends Phaser.Scene {
 
         // Music
         const theme = this.sound.add('music',{volume: 0.1} )
-        // theme.play()
+        theme.play()
 
         // Map Level
         const map =  this.make.tilemap({key:'tilemap'})
@@ -133,14 +133,14 @@ export default class SpaceLevel extends Phaser.Scene {
                 }
                 case'Caelum 32 Part':
                 {
-                    this.star = this.matter.add.image(100,y, 'star', undefined, {label:'star'})
+                    this.star = this.matter.add.image(x,y, 'star', undefined, {label:'star'})
                     break;   
                     
                 }
 
                 case'Caelum 64 Part':
                 {
-                    this.bomb = this.matter.add.image(400,y, 'bomb', undefined, {label:'bomb'})
+                    this.bomb = this.matter.add.image(x,y, 'bomb', undefined, {label:'bomb'})
                     break;      
                     
                 }
