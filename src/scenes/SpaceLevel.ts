@@ -359,11 +359,11 @@ export default class SpaceLevel extends Phaser.Scene {
                 }
 
                 if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player2'  ){
-                   if (this.hitCount > 2) this.scene.start('game-over')
+                   if (this.hitCount > 2) this.scene.start('game-over');  this.hitCount = 0; this.updateHeartUI()
                 }
                  
                 if(bodyA.parent.gameObject !== null && bodyA.parent.gameObject.tile && bodyA.parent.gameObject.tile.properties.hasSpikes && bodyB.label === 'player3'  ){
-                    if (this.hitCount > 2) this.scene.start('game-over')
+                    if (this.hitCount > 2) this.scene.start('game-over'); this.hitCount = 0 ; this.updateHeartUI()
                   }
                 
             })
