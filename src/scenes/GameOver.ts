@@ -33,17 +33,7 @@ export default class GameOver extends Phaser.Scene {
         const theme = this.sound.add('fail-theme',{loop:true} )
         theme.play()
       
-      this.add.image(400,300,"gameOverScreen")
-      this.add.sprite(400,300,"titelScreen").setInteractive().on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN , (ptr,img)=> {
-          console.log({img})
-        console.log("Title clicked!")
-        // this.scene.start('title')
-     })
-      this.add.image(400,300,"restart").setInteractive().on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, (ptr, img)=> {
-        console.log({img})
-        console.log({ptr})
-        console.log(img.getData)
-        console.log("restart clicked!")
+      this.add.image(400,300,"gameOverScreen").setInteractive().on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, ()=> {
         this.scene.start('space-level')
       })
     }
