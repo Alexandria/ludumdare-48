@@ -86,18 +86,6 @@
                 }, 
                 {
                  "ellipse":true,
-                 "height":64,
-                 "id":74,
-                 "name":"Caelum 64 Part",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":64,
-                 "x":2561,
-                 "y":255.333
-                }, 
-                {
-                 "ellipse":true,
                  "height":32,
                  "id":51,
                  "name":"Caelum 32 Part",

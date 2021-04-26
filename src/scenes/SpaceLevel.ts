@@ -127,27 +127,29 @@ export default class SpaceLevel extends Phaser.Scene {
                     this.player.setOnCollide((data:MatterJS.ICollisionPair)=>{
                         this.isTouchingGround = true
                     })
-                    break
+                    break;
                 }
                 case'Caelum 32 Part':
                 {
                     this.star = this.matter.add.image(x,y, 'star', undefined, {label:'star'})
-                    break      
+                    break;   
                     
                 }
 
                 case'Caelum 64 Part':
                 {
                     this.bomb = this.matter.add.image(x,y, 'bomb', undefined, {label:'bomb'})
-                    break      
+                    break;      
                     
                 }
                 case'Caelum  64B Part':
                 {
                     this.bombB = this.matter.add.image(x,y, 'bomb', undefined, {label:'bomb2'})
-                    break      
+                    break ;     
                     
                 }
+                default:
+                    break;
             }
         })
 
