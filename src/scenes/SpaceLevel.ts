@@ -61,6 +61,11 @@ export default class SpaceLevel extends Phaser.Scene {
     
 
     private spawnPoint = {x:0, y:0}
+    private helmentPoint = {x:0, y:0}
+    private jetPacketPoint = {x:0, y:0}
+    private shoewPoint = {x:0, y:0}
+
+
 
     //UI State
     private hitCount = 0
@@ -134,8 +139,6 @@ export default class SpaceLevel extends Phaser.Scene {
     create = () =>
     {
         const {width, height} = this.scale
-        this.matter.world.setBounds(undefined, undefined,undefined,undefined,undefined,false,false,false, false)
-    
         //Main Camera and backgound 
         this.cameras.main.setBounds(0,0,6800,height)
         // const background = this.add.image(width*4 , height*0.5, "sky").setScrollFactor(0.5).setDisplaySize(6400,600).
@@ -175,7 +178,7 @@ export default class SpaceLevel extends Phaser.Scene {
         this.matter.world.convertTilemapLayer(asteriodGround)     
         // this.matter.world.convertTilemapLayer(objectLayer)
         
-        this.matter.world.setBounds(0,0,11000, 600)
+        this.matter.world.setBounds(0,0,11000, 1000)
 
 
         this.currentPlayKey = "astronaut"
@@ -203,6 +206,7 @@ export default class SpaceLevel extends Phaser.Scene {
                 case'Caelum 32 Part':
                 {
                     this.helmet = this.matter.add.image(x,y, 'helmet', undefined, {label:'helmet', friction:100})
+                    this.helmentPoint={x,y}
                     break;   
                     
                 }
@@ -210,12 +214,14 @@ export default class SpaceLevel extends Phaser.Scene {
                 case'Caelum 64 Part':
                 {
                     this.jetpack = this.matter.add.image(x,y, 'jetpack', undefined, {label:'jetpack', friction:100})
+                    this.jetPacketPoint={x,y}
                     break;      
                     
                 }
                 case'Caelum  64B Part':
                 {
                     this.boots = this.matter.add.image(x+90,y, 'boots', undefined, {label:'boots', friction:100})
+                    this.shoewPoint={x,y}
                     break ;     
                     
                 }
@@ -263,9 +269,9 @@ export default class SpaceLevel extends Phaser.Scene {
                     if(bodyB.label === 'player1'){
                         this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y)
                     }else if(bodyB.label === 'player2'){
-                        this.playerTwo.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+                        this.playerTwo.setPosition(this.helmentPoint.x, this.helmentPoint.y)
                     }else if(bodyB.label === 'player3'){
-                        this.playerThree.setPosition(this.spawnPoint.x, this.spawnPoint.y)
+                        this.playerThree.setPosition(this.jetPacketPoint.x, this.jetPacketPoint.y)
                     }
                     bodyA.render.opacity = 0.5
                     bodyB.render.opacity = 0.5
