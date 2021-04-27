@@ -19,8 +19,8 @@ export default class StoryEnd extends Phaser.Scene {
     create = () =>
     {
            //music
-           this.sound.removeByKey('space-level');
-           const theme = this.sound.add('music',{loop:true}, )
+           this.sound.removeByKey('music');
+           const theme = this.sound.add('end-theme',{loop:true}, )
            theme.play()
      
       this.add.image(400,300,"storyEnd").setInteractive().on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, ()=> {
