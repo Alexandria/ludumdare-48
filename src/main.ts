@@ -15,8 +15,7 @@ const config: Phaser.Types.Core.GameConfig = {
     height: 600,
     physics: {
         default: 'matter',
-        matter: {
-            debug:true,            
+        matter: {      
         }
     },
     scene: [ TitleScreen, HowToPlayScreen, StoryOne, StoryTwo, SpaceLevel, GameOver, StoryEnd, EndCredit,]
